@@ -1,0 +1,22 @@
+{
+  "name": "stock",
+  "description": "sistema de inventario",
+  "main": "index.php",
+  "authors": [
+    "ivan"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "gentelella": "^1.4.0",
+    "animate.css": "^3.5.2"
+  }
+}
