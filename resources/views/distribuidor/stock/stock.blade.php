@@ -29,7 +29,7 @@
                   
                   <div class="clearfix"></div>
                 </div>
-                <p class="text-right">Real </p>
+                <p class="text-right">Real @if($request->ciudad <> 'TODOS')| Asignados @endif</p>
                 <div class="x_content">
                 	<div class="list-group">
                 	@foreach($mod_L as $modl)
@@ -57,7 +57,7 @@
                   
                   <div class="clearfix"></div>
                 </div>
-                <p class="text-right">Real </p>
+                <p class="text-right">Real @if($request->ciudad <> 'TODOS')| Asignados @endif</p>
                 <div class="x_content">
                   <div class="list-group">
                   @foreach($mod_Y as $mody)
@@ -84,7 +84,7 @@
                   
                   <div class="clearfix"></div>
                 </div>
-                 <p class="text-right">Real </p>
+                 <p class="text-right">Real @if($request->ciudad <> 'TODOS')| Asignados @endif</p>
                 <div class="x_content">
 
                   <div class="list-group">

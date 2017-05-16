@@ -47,7 +47,7 @@
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">FECHA</label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                       
-                            <input type="text" name="fecha_creacion" value="<?php date_default_timezone_set('America/La_Paz');  $time = time();echo date("Y-m-d H:i:s ", $time);?> " readonly class='form-control'>
+                            <input type="text" name="fecha_creacion" value="<?php date_default_timezone_set('America/La_Paz');  $time = time();echo date("Y-m-d", $time);?> " readonly class='form-control'>
                             </div>
                           </div>
 

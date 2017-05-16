@@ -23,6 +23,11 @@ Route::get('/inicial', 'SesionController@index');
 
 Route::group(['prefix'=>'distribuidor','middleware'=>'auth'],function(){
 
+	route::get('envios/{id}/addDetalle',[
+		'uses' =>'EnviosController@addDetalle',
+		'as'   =>	'envios.addDetalle'
+	]);
+
 	route::get('envios/{id}/detalle',[
 		'uses' =>'EnviosController@detalle',
 		'as'   =>	'envios.detalle'

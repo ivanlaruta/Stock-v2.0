@@ -29,7 +29,7 @@
                   <div class="x_title">
                     <h2>ENVIO # {{$env->id_envio}} <small>Datos generales</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      <li><a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
                       </li>
                     </ul>
                     <div class="clearfix"></div>
@@ -126,7 +126,7 @@
                              {!! Form::text('modelo',null,['class'=>'form-control','placeholder'=>'seleccione una marca','readonly'])!!}
                             @else
                             
-                            {!! Form::select('modelo',$modelos,$request->modelo,['class'=>'form-control','placeholder'=>'seleccione una marca' ,'onchange'=>'this.form.submit();'])!!}
+                            {!! Form::select('modelo',$modelos,$request->modelo,['class'=>'form-control','placeholder'=>'seleccione un modelo' ,'onchange'=>'this.form.submit();'])!!}
                             
                             @endif
                             </div>
@@ -138,22 +138,20 @@
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
                           <div class="form-group">
-                            
 
-                            @if(is_null($request->marca) || is_null($request->modelo))
-                             <div class="form-group">
                               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">MASTER</label>
                               <div class="col-md-6 col-sm-6 col-xs-12">
+                              @if(is_null($request->marca) || is_null($request->modelo))
                                {!! Form::text('master',null,['class'=>'form-control','placeholder'=>'seleccione una marca y un modelo','readonly'])!!}
-                               </div>
-                             </div>
+                            
                             @else
-                              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">MASTER</label>
-                              <div class="col-md-6 col-sm-6 col-xs-12">
-                              {!! Form::select('master',$masters,$request->master,['class'=>'form-control','placeholder'=>'seleccione una master' ,'onchange'=>'this.form.submit();'])!!}
-                              </div>
+                              
+                              {!! Form::select('master',$masters,$request->master,['class'=>'form-control','placeholder'=>'seleccione un master' ,'onchange'=>'this.form.submit();'])!!}
+                              
                             @endif
+                            </div>
                           </div>
+
                         {!! Form::close()!!}
 
 
@@ -163,37 +161,39 @@
                           <input id="master" name="master" type="hidden" value="{{ $request->master }}">
 
                           <div class="form-group">
-                            @if(is_null($request->marca) || is_null($request->modelo) || is_null($request->master))
-                             <div class="form-group">
                               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">AÑO</label>
                               <div class="col-md-6 col-sm-6 col-xs-12">
+                                @if(is_null($request->marca) || is_null($request->modelo) || is_null($request->master))
                                {!! Form::text('anio',null,['class'=>'form-control','placeholder'=>'seleccione una marca, modelo y master','readonly'])!!}
-                               </div>
-                             </div>
+                               
                             @else
-                              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">AÑO</label>
-                              <div class="col-md-6 col-sm-6 col-xs-12">
-                              {!! Form::select('anio',$anios,$request->anio,['class'=>'form-control','placeholder'=>'seleccione una master' ,'onchange'=>'this.form.submit();'])!!}
-                              </div>
+                              
+                              {!! Form::select('anio',$anios,$request->anio,['class'=>'form-control','placeholder'=>'seleccione un año' ,'onchange'=>'this.form.submit();'])!!}
+                              
                             @endif
+                            </div>
                           </div>
                         {!! Form::close()!!}
-
 
                         {!! Form::open(array('route' => ['envios.detalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
                           <input id="master" name="master" type="hidden" value="{{ $request->master }}">
+                          <input id="anio" name="anio" type="hidden" value="{{ $request->anio }}">
 
                           <div class="form-group">
-                           
-                             <div class="form-group">
+
                               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">COLOR EXTERIOR</label>
                               <div class="col-md-6 col-sm-6 col-xs-12">
-                               {!! Form::text('col_ext',null,['class'=>'form-control','placeholder'=>'seleccione un color','readonly'])!!}
-                               </div>
-                             </div>
-                            
+                                @if(is_null($request->marca) || is_null($request->modelo) || is_null($request->master) || is_null($request->anio))
+                               {!! Form::text('ext',null,['class'=>'form-control','placeholder'=>'seleccione un color','readonly'])!!}
+                               
+                            @else
+                              
+                              {!! Form::select('ext',$exteriores,$request->ext,['class'=>'form-control','placeholder'=>'seleccione un color' ,'onchange'=>'this.form.submit();'])!!}
+                              
+                            @endif
+                            </div>
                           </div>
                         {!! Form::close()!!}
 
@@ -202,43 +202,145 @@
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
                           <input id="master" name="master" type="hidden" value="{{ $request->master }}">
-
+                          <input id="anio" name="anio" type="hidden" value="{{ $request->anio }}">
+                          <input id="ext" name="ext" type="hidden" value="{{ $request->ext }}">
                           <div class="form-group">
-                             <div class="form-group">
                               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">COLOR INTERIOR</label>
                               <div class="col-md-6 col-sm-6 col-xs-12">
-                               {!! Form::text('col_int',null,['class'=>'form-control','placeholder'=>'seleccione un color','readonly'])!!}
-                               </div>
-                             </div>
+                                @if(is_null($request->marca) || is_null($request->modelo) || is_null($request->master) || is_null($request->anio) || is_null($request->ext))
+                               {!! Form::text('int',null,['class'=>'form-control','placeholder'=>'seleccione un color','readonly'])!!}
+                            @else
+                              {!! Form::select('int',$interiores,$request->int,['class'=>'form-control','placeholder'=>'seleccione un color' ,'onchange'=>'this.form.submit();'])!!}
+                            @endif
+                            </div>
                           </div>
-                        {!! Form::close()!!}
 
-                        {!! Form::open(array('route' => ['envios.detalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
+                        {!! Form::close()!!}
+                        
+                        {!! Form::open(array('route' => ['envios.addDetalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
+
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
                           <input id="master" name="master" type="hidden" value="{{ $request->master }}">
+                          <input id="anio" name="anio" type="hidden" value="{{ $request->anio }}">
+                          <input id="ext" name="ext" type="hidden" value="{{ $request->ext }}">
+                          <input id="int" name="int" type="hidden" value="{{ $request->int }}">
 
-                          <div class="form-group">
-                             
-                             <div class="form-group">
-                              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">CANTIDAD</label>
-                              <div class="col-md-6 col-sm-6 col-xs-12">
-                               {!! Form::text('cantidad',null,['class'=>'form-control','placeholder'=>'seleccione una cantidad','readonly'])!!}
-                               </div>
-                             </div>
-                          </div>
+                          @if(is_null($request->marca) || is_null($request->modelo) || is_null($request->master) || is_null($request->anio) || is_null($request->ext) || is_null($request->int))
 
-                          <div class="form-group">
-                            {!! Form::submit('AGREGAR A LISTA',['class'=>'btn btn-primary'])!!}
-                          </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">CANTIDAD DISPONIBLE</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                {!! Form::text('disp',NULL,['class'=>'form-control','readonly'])!!}<br>
+                                </div> 
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">CANTIDAD A ASIGNAR</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                {!! Form::number('cant',null,['class'=> 'form-control','placeholder'=>'Ingrese cantidad','readonly'])!!}<hr>
+                                 </div>
+                            </div>
+                            
+                                 {!! Form::submit('AGREGAR A LA LISTA',['class'=>'btn btn-success btn-block disabled'])!!}
+
+
+
+                            @else
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">CANTIDAD DISPONIBLE</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                {!! Form::text('disp',$count,['class'=>'form-control','readonly'])!!}<br>
+                                </div> 
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">CANTIDAD A ASIGNAR</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                {!! Form::number('cant',null,['class'=> 'form-control','placeholder'=>'Ingrese cantidad','min'=>'1' ,'max'=>$count,'required'])!!}<hr>
+                                 </div>
+                            </div>
+                            
+                                 {!! Form::submit('AGREGAR A LA LISTA',['class'=>'btn btn-success btn-block'])!!}
+                            @endif
+                            
                         {!! Form::close()!!}
+
+                       
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {{-- fin detalle --}}   
+
+
+
+              {{-- LISTA --}}   
+
+
+
+              <div class="row">
+
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel ">
+                  <div class="x_title">
+                    <h2>DETALLE <small>Lista de unidades</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <!-- Smart Wizard -->
+                      <div>
+                       
+                       <p class="text-muted font-13 m-b-30"></p>
+
+
+                     <table id="datatable" class="table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Marca</th>
+                          <th>Modelo</th>
+                          <th>Master</th>
+                          <th>Año</th>
+                          <th>Chassis</th>
+                          <th>Exterior</th>
+                          <th>Interior</th>
+                          <th>Chassis</th>
+                          <th>Accion</th>
+                          
+                        </tr>
+                      </thead>
+                        
+                      <tbody>
+                       
+                        <tr>                
+                          
+                        </tr>
+                       
+                      </tbody>
+                    </table>
 
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              {{-- fin detalle --}}
+
+
+
+
+              {{-- fin LISTA --}}
+
+
+
+                
+
+
             </div>
           </div>
         

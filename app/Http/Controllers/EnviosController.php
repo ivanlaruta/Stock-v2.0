@@ -55,9 +55,9 @@ class EnviosController extends Controller
     {
         $env =Envio::find($id);
         $marcas =Marca::whereIn('MARCA', ['YAMAHA', 'TOYOTA', 'LEXUS'])
-            ->orderBy('MARCA','ASC')
-            ->pluck('MARCA','cod_marca')
-            ;
+        ->orderBy('MARCA','ASC')
+        ->pluck('MARCA','cod_marca')
+        ;
 
         if(is_null($request->marca))
         {
@@ -65,14 +65,14 @@ class EnviosController extends Controller
             ->with('env',$env)
             ->with('marcas',$marcas)
             ->with('request',$request)
-             ;
+            ;
         }
         else
         {
             $modelos =Modelo::where('cod_marca','=',$request->marca)
-                    ->orderBy('MODELO','ASC')
-                    ->pluck('MODELO','cod_modelo')
-                    ;
+            ->orderBy('MODELO','ASC')
+            ->pluck('MODELO','cod_modelo')
+            ;
 
             if(is_null($request->modelo))
             {
@@ -81,7 +81,7 @@ class EnviosController extends Controller
                 ->with('marcas',$marcas)
                 ->with('modelos',$modelos)
                 ->with('request',$request)
-                 ;
+                ;
             }
             else
             {
@@ -111,17 +111,121 @@ class EnviosController extends Controller
                     ->groupBy('ANIO_MOD')
                     ->pluck('ANIO_MOD','ANIO_MOD');
 
-                    return view('distribuidor.envios.detalle')
-                    ->with('env',$env)
-                    ->with('marcas',$marcas)
-                    ->with('modelos',$modelos)
-                    ->with('masters',$masters)
-                    ->with('anios',$anios)
-                    ->with('request',$request)
-                     ;
+                    if(is_null($request->anio))
+                    {
+                        return view('distribuidor.envios.detalle')
+                        ->with('env',$env)
+                        ->with('marcas',$marcas)
+                        ->with('modelos',$modelos)
+                        ->with('masters',$masters)
+                        ->with('anios',$anios)
+                        ->with('request',$request)
+                        ;
+                    }
+                    else
+                    {
+                        $exteriores = V_stock_gtauto::select('COLOR_EXTERNO')
+                        ->where('cod_marca','=',$request->marca)
+                        ->where('COD_MODELO','=',$request->modelo)
+                        ->where('COD_MASTER','=',$request->master)
+                        ->where('ANIO_MOD','=',$request->anio)
+                        ->orderBy('COLOR_EXTERNO', 'desc')
+                        ->groupBy('COLOR_EXTERNO')
+                        ->pluck('COLOR_EXTERNO','COLOR_EXTERNO');
+
+                        if(is_null($request->ext))
+                        {
+                            return view('distribuidor.envios.detalle')
+                            ->with('env',$env)
+                            ->with('exteriores',$exteriores)
+                            ->with('marcas',$marcas)
+                            ->with('modelos',$modelos)
+                            ->with('masters',$masters)
+                            ->with('anios',$anios)
+                            ->with('request',$request)
+                            ;
+                        }
+                        else
+                        {  
+                            $interiores = V_stock_gtauto::select('COLOR_INTERNO')
+                            ->where('cod_marca','=',$request->marca)
+                            ->where('COD_MODELO','=',$request->modelo)
+                            ->where('COD_MASTER','=',$request->master)
+                            ->where('ANIO_MOD','=',$request->anio)
+                            ->where('COLOR_EXTERNO','=',$request->ext)
+                            ->orderBy('COLOR_INTERNO', 'desc')
+                            ->groupBy('COLOR_INTERNO')
+                            ->pluck('COLOR_INTERNO','COLOR_INTERNO');
+
+                            if(is_null($request->int))
+                            {
+                                return view('distribuidor.envios.detalle')
+                                ->with('env',$env)
+                                ->with('interiores',$interiores)
+                                ->with('exteriores',$exteriores)
+                                ->with('marcas',$marcas)
+                                ->with('modelos',$modelos)
+                                ->with('masters',$masters)
+                                ->with('anios',$anios)
+                                ->with('request',$request)
+                                ;
+                            }
+                            else
+                            {
+                                $count = DB::table('V_stock_gtauto')
+                                ->where('cod_marca','=',$request->marca)
+                                ->where('COD_MODELO','=',$request->modelo)
+                                ->where('COD_MASTER','=',$request->master)
+                                ->where('ANIO_MOD','=',$request->anio)
+                                ->where('COLOR_EXTERNO','=',$request->ext)
+                                ->where('COLOR_INTERNO','=',$request->int)
+                                ->count();
+
+                                return view('distribuidor.envios.detalle')
+                                ->with('env',$env)
+                                ->with('count',$count)
+                                ->with('interiores',$interiores)
+                                ->with('exteriores',$exteriores)
+                                ->with('marcas',$marcas)
+                                ->with('modelos',$modelos)
+                                ->with('masters',$masters)
+                                ->with('anios',$anios)
+                                ->with('request',$request)
+                                ;
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+
+
+    public function addDetalle(Request $request,$id)
+    {
+        $count = DB::table('V_stock_gtauto')
+            ->where('cod_marca','=',$request->marca)
+            ->where('COD_MODELO','=',$request->modelo)
+            ->where('COD_MASTER','=',$request->master)
+            ->where('ANIO_MOD','=',$request->anio)
+            ->where('COLOR_EXTERNO','=',$request->ext)
+            ->where('COLOR_INTERNO','=',$request->int)
+            ->count();
+        if ($request->cant <= $count);
+        {
+            $unidades = V_stock_gtauto::
+              where('cod_marca','=',$request->marca)
+            ->where('COD_MODELO','=',$request->modelo)
+            ->where('COD_MASTER','=',$request->master)
+            ->where('ANIO_MOD','=',$request->anio)
+            ->where('COLOR_EXTERNO','=',$request->ext)
+            ->where('COLOR_INTERNO','=',$request->int)
+            ->paginate($request->cant);
+
+            
+        }
+        
+             
     }
 
     /**
