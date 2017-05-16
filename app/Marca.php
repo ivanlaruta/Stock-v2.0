@@ -21,4 +21,9 @@ class Marca extends Model
     {
         return $this->hasMany('App\V_stock_gtauto','cod_marca');
     }
+
+    public function detalles()
+    {
+        return $this->hasMany('App\Detalle','cod_marca');
+    }
 }

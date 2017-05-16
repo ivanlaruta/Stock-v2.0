@@ -24,4 +24,8 @@ class Modelo_generico extends Model
     {
         return $this->hasMany('App\V_stock_gtauto','COD_MODELOS']);
     }
+    public function detalles()
+    {
+        return $this->hasMany('App\Detalle','COD_MODELOS');
+    }
 }

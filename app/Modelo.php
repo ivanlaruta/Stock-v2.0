@@ -22,4 +22,9 @@ class Modelo extends Model
     {
         return $this->hasMany('App\V_stock_gtauto','COD_MODELO');
     }
+
+     public function detalles()
+    {
+        return $this->hasMany('App\Detalle','COD_MODELO');
+    }
 }

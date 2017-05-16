@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class V_stock_gtauto extends Model
 {
     protected $table = "v_stock_gtauto";
+    protected $primaryKey ='CHASIS';
     public $incrementing=false;
    
     protected $fillable =['cod_marca','MARCA','MODELOS','COD_MODELO','MODELO','COD_MASTER','MASTER','ANIO_MOD','COLOR_EXTERNO','COLOR_INTERNO','CHASIS','COD_UBICACION','UBICACION','nom_localidad','estado	','estado_real','LIBERADO','nacionalizado'];
@@ -29,5 +30,9 @@ class V_stock_gtauto extends Model
     public function modelo_gen()
     {
         return $this->belongsTo('App\Marca','MODELOS');
-    } 
+    }
+    public function detalles()
+    {
+        return $this->hasMany('App\Detalle','CHASIS');
+    }
 }

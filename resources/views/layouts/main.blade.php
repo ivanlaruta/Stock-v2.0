@@ -22,8 +22,20 @@
     <!-- bootstrap-daterangepicker -->
     <link href="{{asset('bower_components/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css')}}" rel="stylesheet">
     
+    <!-- iCheck -->
+    <link href="{{asset('bower_components/gentelella/vendors/iCheck/skins/flat/green.css')}}" rel="stylesheet">
+    <!-- bootstrap-progressbar -->
+    <link href="{{asset('bower_components/gentelella/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css')}}" rel="stylesheet">
+    <!-- PNotify -->
+    <link href="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.css')}}" rel="stylesheet">
+    <link href="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.buttons.css')}}" rel="stylesheet">
+    <link href="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.nonblock.css')}}" rel="stylesheet">
+
+
     <!-- Custom Theme Style -->
     <link href="{{asset('bower_components/gentelella/build/css/custom.min.css')}}" rel="stylesheet">
+
+
     <!-- animate.css -->
     <link href="{{asset('bower_components/animate.css/animate.min.css')}}" rel="stylesheet">
   </head>
@@ -35,15 +47,19 @@
         <!-- sidebar menu -->
         @include('partials.sidebar')
         <!-- /sidebar menu -->
-    
+        
         <!-- top navigation -->
         @include('partials.top')
+          
         <!-- /top navigation -->
 
         <!-- page content -->
-        
+                    
+                            
+                        
         @yield('content')
 
+         
         <!-- /page content -->
         
        
@@ -51,9 +67,17 @@
         <!-- footer content -->
         @include('partials.footer')
         <!-- /footer content -->
+
       </div>
     </div>
 
+    @if(!session('mensaje')==null)
+        <script type="text/javascript"> 
+            function init_PNotify() {
+            new PNotify({title: "Correcto",type: "success",text: "Se agrego la seleccion correctamente.",styling: 'bootstrap3',});
+            }; 
+        </script>>    
+    @endif﻿
     <!-- jQuery -->
 
     <script src="{{asset('bower_components/gentelella/vendors/jquery/dist/jquery.min.js')}}"></script>
@@ -94,6 +118,13 @@
     
     <!-- iCheck -->
     <script src="{{asset('bower_components/gentelella/vendors/iCheck/icheck.min.js')}}"></script>
+
+    <!-- PNotify -->
+    <script src="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.js')}}"></script>
+    <script src="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.buttons.js')}}"></script>
+    <script src="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.nonblock.js')}}"></script>
+
+
     <!-- Datatables -->
     <script src="{{asset('bower_components/gentelella/vendors/datatables.net/js/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('bower_components/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
@@ -111,11 +142,17 @@
     <script src="{{asset('bower_components/gentelella/vendors/pdfmake/build/pdfmake.min.js')}}"></script>
     <script src="{{asset('bower_components/gentelella/vendors/pdfmake/build/vfs_fonts.js')}}"></script>
     
+
      <!-- jQuery Smart Wizard -->
     <script src="{{asset('bower_components/gentelella/vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js')}}"></script>
+    
+    
 
     <!-- Custom Theme Scripts -->
-    <script src="{{asset('bower_components/gentelella/build/js/custom.min.js')}}"></script>
+{{--     <script src="{{asset('bower_components/gentelella/build/js/custom.min.js')}}"></script> --}}   
+    <script src="{{asset('js/custom.js')}}"></script>
     @yield('scripts')
   </body>
 </html>
+
+

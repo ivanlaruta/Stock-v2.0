@@ -21,4 +21,9 @@ class Master extends Model
     {
         return $this->hasMany('App\V_stock_gtauto','COD_MASTER');
     }
+
+    public function detalle()
+    {
+        return $this->hasMany('App\Detalle','COD_MASTER');
+    }
 }    

@@ -8,6 +8,7 @@ use App\Envio;
 use App\Marca;
 use App\Modelo;
 use App\Master;
+use App\Detalle;
 use App\V_stock_gtauto;
 use DB;
 class EnviosController extends Controller
@@ -59,12 +60,15 @@ class EnviosController extends Controller
         ->pluck('MARCA','cod_marca')
         ;
 
+        $det = Detalle::where('id_envio','=',$id)->get();
+        
         if(is_null($request->marca))
         {
             return view('distribuidor.envios.detalle')
             ->with('env',$env)
             ->with('marcas',$marcas)
             ->with('request',$request)
+            ->with('det',$det)
             ;
         }
         else
@@ -81,6 +85,7 @@ class EnviosController extends Controller
                 ->with('marcas',$marcas)
                 ->with('modelos',$modelos)
                 ->with('request',$request)
+                ->with('det',$det)
                 ;
             }
             else
@@ -99,6 +104,7 @@ class EnviosController extends Controller
                     ->with('modelos',$modelos)
                     ->with('masters',$masters)
                     ->with('request',$request)
+                    ->with('det',$det)
                      ;
                 }
                 else
@@ -120,6 +126,7 @@ class EnviosController extends Controller
                         ->with('masters',$masters)
                         ->with('anios',$anios)
                         ->with('request',$request)
+                        ->with('det',$det)
                         ;
                     }
                     else
@@ -143,6 +150,7 @@ class EnviosController extends Controller
                             ->with('masters',$masters)
                             ->with('anios',$anios)
                             ->with('request',$request)
+                            ->with('det',$det)
                             ;
                         }
                         else
@@ -168,6 +176,7 @@ class EnviosController extends Controller
                                 ->with('masters',$masters)
                                 ->with('anios',$anios)
                                 ->with('request',$request)
+                                ->with('det',$det)
                                 ;
                             }
                             else
@@ -191,6 +200,7 @@ class EnviosController extends Controller
                                 ->with('masters',$masters)
                                 ->with('anios',$anios)
                                 ->with('request',$request)
+                                ->with('det',$det)
                                 ;
                             }
                         }
@@ -211,7 +221,7 @@ class EnviosController extends Controller
             ->where('COLOR_EXTERNO','=',$request->ext)
             ->where('COLOR_INTERNO','=',$request->int)
             ->count();
-        if ($request->cant <= $count);
+        if ($request->cant <= $count)
         {
             $unidades = V_stock_gtauto::
               where('cod_marca','=',$request->marca)
@@ -220,12 +230,24 @@ class EnviosController extends Controller
             ->where('ANIO_MOD','=',$request->anio)
             ->where('COLOR_EXTERNO','=',$request->ext)
             ->where('COLOR_INTERNO','=',$request->int)
+            ->whereNotIn('CHASIS', function($query) use ($id){
+                $query->select('chassis')
+                ->from(with(new Detalle)->getTable())
+                ->where('id_envio', $id);})
             ->paginate($request->cant);
 
             
+            foreach($unidades as $add)
+            {
+                $det = new Detalle();
+                $det -> id_envio = $id;
+                $det -> chassis = $add->CHASIS;
+                $det -> save();
+            }
+
+            return redirect()->route('envios.detalle', ['id' => $id])->with('mensaje',"Seleccion ingresada correctamente");    
         }
-        
-             
+          
     }
 
     /**
