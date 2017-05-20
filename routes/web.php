@@ -32,6 +32,12 @@ Route::group(['prefix'=>'distribuidor','middleware'=>'auth'],function(){
 		'uses' =>'EnviosController@detalle',
 		'as'   =>	'envios.detalle'
 	]);
+
+	route::get('envios/{id}/{id2}/{id3}/{id4}/{id5}/{id6}/{id7}/detalle_all',[
+		'uses' =>'EnviosController@detalle_all',
+		'as'   =>	'envios.detalle_all'
+	]);
+
 	route::resource('envios','EnviosController');
 	
 	route::resource('principal','PrincipalController');

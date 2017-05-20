@@ -20,8 +20,10 @@ class EnviosController extends Controller
      */
     public function index(Request $request)
     {
-              
-       dd($request);
+       $env =Envio::where('estado_envio', '=', '1')->get();
+        return view('distribuidor.envios.borradores')
+            ->with('env',$env)
+        ;
     }
 
     /**
@@ -45,11 +47,47 @@ class EnviosController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+        date_default_timezone_set('America/La_Paz');
+        $time = time();
+        $now =date("Y-m-d", $time);
+
         $env = new Envio($request->all());
+        $env->fecha_creacion = $now;
+        $env->fecha_modificacion = $now;
         $env->save();    
        
         return redirect()->route('envios.detalle', ['id' => $env->id_envio]);
+    }
+
+    public function detalle_all(Request $request,$id,$MODELO,$MARCA,$MASTER,$ANIO_MOD,$COLOR_EXTERNO,$COLOR_INTERNO)
+    {   
+        if($MODELO=='0')
+        {
+            $det_all = V_stock_gtauto::select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS')
+             ->join('detalles', 'detalles.chassis', '=','V_stock_gtauto.CHASIS')
+             ->where('id_envio','=',$id)
+             ->get();
+        }
+        else
+        {
+            $det_all = V_stock_gtauto::select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS')
+            ->join('detalles', 'detalles.chassis', '=','V_stock_gtauto.CHASIS')
+            ->where('MARCA','=',$MODELO)
+            ->where('MODELO','=',$MARCA)
+            ->where('MASTER','=',$MASTER)
+            ->where('ANIO_MOD','=',$ANIO_MOD)
+            ->where('COLOR_EXTERNO','=',$COLOR_EXTERNO)
+            ->where('COLOR_INTERNO','=',$COLOR_INTERNO)
+            ->get();
+
+        }
+
+        
+        return view('distribuidor.envios.detalle_all')
+            ->with('det_all',$det_all)
+            ->with('id',$id)
+            ;
     }
 
     public function detalle(Request $request,$id)
@@ -60,8 +98,19 @@ class EnviosController extends Controller
         ->pluck('MARCA','cod_marca')
         ;
 
-        $det = Detalle::where('id_envio','=',$id)->get();
+        $det_all = Detalle::where('id_envio','=',$id)->get();
+
+        // select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO',DB::raw('count(detalles.chassis) as user_count')
+
+        $det = V_stock_gtauto::select(DB::raw('ROW_NUMBER() OVER(ORDER BY MARCA DESC) AS ITEM,count(detalles.chassis) as CANTIDAD,V_stock_gtauto.MARCA,V_stock_gtauto.MODELO,V_stock_gtauto.MASTER, V_stock_gtauto.ANIO_MOD, V_stock_gtauto.COLOR_EXTERNO, V_stock_gtauto.COLOR_INTERNO'))
+             ->join('detalles', 'detalles.chassis', '=', 'V_stock_gtauto.CHASIS')
+             ->where('id_envio','=',$id)
+             ->groupBy('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO')
+             ->get();
+
         
+
+       
         if(is_null($request->marca))
         {
             return view('distribuidor.envios.detalle')
@@ -69,6 +118,7 @@ class EnviosController extends Controller
             ->with('marcas',$marcas)
             ->with('request',$request)
             ->with('det',$det)
+            ->with('det_all',$det_all)
             ;
         }
         else
@@ -86,6 +136,7 @@ class EnviosController extends Controller
                 ->with('modelos',$modelos)
                 ->with('request',$request)
                 ->with('det',$det)
+                ->with('det_all',$det_all)
                 ;
             }
             else
@@ -105,6 +156,7 @@ class EnviosController extends Controller
                     ->with('masters',$masters)
                     ->with('request',$request)
                     ->with('det',$det)
+                    ->with('det_all',$det_all)
                      ;
                 }
                 else
@@ -127,6 +179,7 @@ class EnviosController extends Controller
                         ->with('anios',$anios)
                         ->with('request',$request)
                         ->with('det',$det)
+                        ->with('det_all',$det_all)
                         ;
                     }
                     else
@@ -151,6 +204,7 @@ class EnviosController extends Controller
                             ->with('anios',$anios)
                             ->with('request',$request)
                             ->with('det',$det)
+                            ->with('det_all',$det_all)
                             ;
                         }
                         else
@@ -177,6 +231,7 @@ class EnviosController extends Controller
                                 ->with('anios',$anios)
                                 ->with('request',$request)
                                 ->with('det',$det)
+                                ->with('det_all',$det_all)
                                 ;
                             }
                             else
@@ -201,6 +256,7 @@ class EnviosController extends Controller
                                 ->with('anios',$anios)
                                 ->with('request',$request)
                                 ->with('det',$det)
+                                ->with('det_all',$det_all)
                                 ;
                             }
                         }

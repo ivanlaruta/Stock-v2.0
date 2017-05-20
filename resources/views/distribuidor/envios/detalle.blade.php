@@ -11,7 +11,7 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel ">
                   <div class="x_title">
-                    <h2>ENVIO # {{$env->id_envio}} <small>Datos generales</small></h2>
+                    <h2>ENVIO 00{{$env->id_envio}} <small>Datos generales</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
                       </li>
@@ -70,30 +70,36 @@
 
               {{-- fin general --}}
 
-             {{-- detalle --}}
+             {{-- detalle (agregar unidades)--}}
 
-            <div class="row">
+            <div @if(is_null($request->marca)) class="row animated flash" @else  class="row" @endif>
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>ITEMS <small>Agregar Unidades</small></h2>
+                    <h2>AGREGAR <small>Agregar Unidades</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      <li><a class="collapse-link"><i @if(is_null($request->marca)) class="fa fa-chevron-down" @else class="fa fa-chevron-up" @endif ></i></a>
                       </li>
                     </ul>
                     <div class="clearfix"></div>
                   </div>
-                  <div class="x_content">
+
+                         
+              
+                  <div  class="x_content" @if(is_null($request->marca))  style="display: none;"  @endif>
+
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                      <div class="col-md-6">
+                      <div class="col-md-4">
+
                         {!! Form::open(array('route' => ['envios.detalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
                        
                             <label class="control-label " for="first-name">MARCA</label>
                            
                             {!! Form::select('marca',$marcas,$request->marca,['class'=>'form-control','placeholder'=>'seleccione una marca' ,'onchange'=>'this.form.submit();'])!!}
-                           
+
                         {!! Form::close()!!}
-                       
+                        </div>
+                        <div class="col-md-4">                       
                         
                         {!! Form::open(array('route' => ['envios.detalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
@@ -110,7 +116,8 @@
                             @endif
                            
                         {!! Form::close()!!}
-
+                        </div>
+                        <div class="col-md-4"> 
 
                         {!! Form::open(array('route' => ['envios.detalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
@@ -130,8 +137,10 @@
                            
 
                         {!! Form::close()!!}
-
-
+                        </div>
+                      </div>
+                      <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-md-4">
                         {!! Form::open(array('route' => ['envios.detalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
@@ -150,8 +159,8 @@
                             @endif
                            
                         {!! Form::close()!!}
-                      </div>
-                      <div class="col-md-6">
+                        </div>
+                        <div class="col-md-4"> 
                         {!! Form::open(array('route' => ['envios.detalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
@@ -172,7 +181,8 @@
                             @endif
                            
                         {!! Form::close()!!}
-
+                        </div>
+                        <div class="col-md-4"> 
 
                         {!! Form::open(array('route' => ['envios.detalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
@@ -191,6 +201,9 @@
                             
 
                         {!! Form::close()!!}
+                        </div>
+                      </div>
+                      <div class="col-md-12 col-sm-12 col-xs-12">
                         
                         {!! Form::open(array('route' => ['envios.addDetalle',$env->id_envio], 'method' => 'get','class' => 'form-horizontal form-label-left')) !!}﻿
 
@@ -203,33 +216,50 @@
 
                           @if(is_null($request->marca) || is_null($request->modelo) || is_null($request->master) || is_null($request->anio) || is_null($request->ext) || is_null($request->int))
 
-                          
+                          <div class="col-md-4">
                                 <label class="control-label " for="first-name">CANTIDAD DISPONIBLE</label>
                                 
                                 {!! Form::text('disp',NULL,['class'=>'form-control','readonly'])!!}
-                              
+                          </div>
+                          <div class="col-md-4"> 
+    
 
-                           
                                 <label class="control-label " for="first-name">CANTIDAD A ASIGNAR</label>
                                
                                 {!! Form::number('cant',null,['class'=> 'form-control','placeholder'=>'Ingrese cantidad','readonly'])!!}<hr>
-                                 </div>
+                          </div>
+                           </div>
+                          
+                            <div class="form-group">
+                              <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                                   <button type="button" class = "btn btn-success btn-block disabled">AGREGAR A LA LISTA</button>
-                      
+                         </div>  </div>
+                        
+
                             @else
+                            <div class="col-md-4"> 
                           
                                 <label class="control-label " for="first-name">CANTIDAD DISPONIBLE</label>
                               
                                 {!! Form::text('disp',$count,['class'=>'form-control','readonly'])!!}
-                              
+                             </div>
+                            <div class="col-md-4"> 
+
                                 <label class="control-label " for="first-name">CANTIDAD A ASIGNAR</label>
                               
                                 {!! Form::number('cant',null,['class'=> 'form-control','placeholder'=>'Ingrese cantidad','min'=>'1' ,'max'=>$count,'required'])!!}<hr>
-                                 </div>
-                            
-                                 {!! Form::submit('AGREGAR A LA LISTA',['class'=>'btn btn-success btn-block'])!!}
-                            @endif
+                            </div>
+                           </div>
+
                           
+                            <div class="form-group">
+                              <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                {!! Form::submit('AGREGAR A LA LISTA',['class'=>'btn btn-success btn-block animated pulse'])!!}
+                              </div>
+                            </div>
+                            
+                            @endif
+                    
                         {!! Form::close()!!}
 
                        
@@ -238,7 +268,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              
               {{-- fin detalle --}}   
 
 
@@ -246,16 +276,14 @@
               {{-- LISTA --}}   
 
 
-               @if(is_null($request->marca) )
-              <div class="row animated shake">
-              @else
+               
               <div class="row">
-              @endif
+             
 
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel ">
                   <div class="x_title">
-                    <h2>DETALLE <small>Lista de unidades</small></h2>
+                    <h2>SELECCIONES AGREGADAS <small>Lista resumen</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -270,17 +298,19 @@
                        <p class="text-muted font-13 m-b-30"></p>
 
 
-                     <table id="datatable1" class="table table-striped table-bordered">
+                     <table id="datatable1" class="table table-hover">
                       <thead>
                         <tr>
-                         <th>Marca</th>
+
+                          <th>#</th>
+                          <th>Marca</th>
                           <th>Modelo</th>
                           <th>Master</th>
                           <th>Año</th> 
                           <th>Exterior</th>
                           <th>Interior</th>
-                          <th>Chassis</th>
-                          <th>Opciones</th> 
+                          <th>Cantidad</th>
+                          <th></th> 
                           
                         </tr>
                       </thead>
@@ -288,20 +318,22 @@
                       <tbody>
                         @foreach($det as $dets)
                         <tr>
-                        <td>{{ $dets -> vehiculo -> MARCA }}</td>
-                        <td>{{ $dets -> vehiculo -> MODELO }}</td>
-                        <td>{{ $dets -> vehiculo -> MASTER }}</td>
-                        <td>{{ $dets -> vehiculo -> ANIO_MOD }}</td>
-                        <td>{{ $dets -> vehiculo -> COLOR_EXTERNO }}</td>
-                        <td>{{ $dets -> vehiculo -> COLOR_INTERNO }}</td>
-                        <td>{{ $dets -> vehiculo -> CHASIS }}</td>
-                      
+                        <td>{{ $dets -> ITEM}}</td>
+                        <td>{{ $dets -> MARCA }}</td>
+                        <td>{{ $dets -> MODELO }}</td>
+                        <td>{{ $dets -> MASTER }}</td>
+                        <td>{{ $dets -> ANIO_MOD }}</td>
+                        <td>{{ $dets -> COLOR_EXTERNO }}</td>
+                        <td>{{ $dets -> COLOR_INTERNO }}</td>
+                        <td>{{ $dets -> CANTIDAD }}</td>
+
                         <td>
                         <div class="btn-group">
-                          <button type="text" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-                          <span class="caret"></span></button>
-                          <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Modificar</a></li>
+                            <button type="text" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-option-vertical"></span></button>
+                            <ul class="dropdown-menu" role="menu">
+                            <li><a href="{{ route('envios.detalle_all',['id' => $env-> id_envio, 'id2' =>$dets -> MARCA , 'id3' =>$dets -> MODELO, 'id4' =>$dets -> MASTER, 'id5' =>$dets -> ANIO_MOD, 'id6' =>$dets -> COLOR_EXTERNO, 'id7' =>$dets -> COLOR_INTERNO])}}">Ver detalle</a></li>
+                            <li><a href="#">Editar cantidad</a></li>
                             <li><a href="#">Quitar</a></li>
                           </ul>
                         </div>
@@ -314,7 +346,16 @@
                        
                       </tbody>
                     </table>
+                    <hr>
+                    <a href="{{ route('envios.detalle_all',['id' => $env-> id_envio, 'id2' =>'0', 'id3' =>'0', 'id4' =>'0', 'id5' =>'0', 'id6' =>'0', 'id7' =>'0'])}}">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ver Todo el detalle</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
 
+                    
                       </div>
                     </div>
                   </div>
@@ -322,6 +363,33 @@
               </div>
 
               {{-- fin LISTA --}}
+              
+
+
+              <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel ">
+                  <div class="x_content">
+                      <div>
+                     
+                        <div class="form-group">
+                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-2">
+                          <button type="button" class="btn btn-primary">GUARDAR COMO BORRADOR</button>
+                          <button type="reset" class="btn btn-primary">GUARDAR PARA APROBACION</button>
+                          <button type="submit" class="btn btn-success">GUARDAR Y APROBAR </button>
+                        </div>
+                      </div>
+
+                      </div>
+                      <hr>
+                      <br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              
 
                 </div>
               </div>

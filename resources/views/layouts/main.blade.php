@@ -40,7 +40,7 @@
     <link href="{{asset('bower_components/animate.css/animate.min.css')}}" rel="stylesheet">
   </head>
 
-  <body class="nav-md">
+  <body class="nav-md footer_fixed">
     <div class="container body">
       <div class="main_container">
 
@@ -71,13 +71,7 @@
       </div>
     </div>
 
-    @if(!session('mensaje')==null)
-        <script type="text/javascript"> 
-            function init_PNotify() {
-            new PNotify({title: "Correcto",type: "success",text: "Se agrego la seleccion correctamente.",styling: 'bootstrap3',});
-            }; 
-        </script>>    
-    @endif﻿
+    
     <!-- jQuery -->
 
     <script src="{{asset('bower_components/gentelella/vendors/jquery/dist/jquery.min.js')}}"></script>
@@ -151,8 +145,18 @@
     <!-- Custom Theme Scripts -->
 {{--     <script src="{{asset('bower_components/gentelella/build/js/custom.min.js')}}"></script> --}}   
     <script src="{{asset('js/custom.js')}}"></script>
+
+    @if(!session('mensaje')==null)
+        <script type="text/javascript"> 
+            function init_PNotify() {
+            new PNotify({title: "Correcto",type: "success",text: "La seleccion se agrego correctamente.",styling: 'bootstrap3',});
+            }; 
+        </script>>    
+    @endif﻿
     @yield('scripts')
+
   </body>
+
 </html>
 
 

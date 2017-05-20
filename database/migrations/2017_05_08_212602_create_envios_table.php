@@ -18,7 +18,8 @@ class CreateEnviosTable extends Migration
             $table->increments('id_envio');
 
             $table->date('fecha_creacion')->nullable();
-            $table->date('fecha_enviado')->nullable();
+            $table->date('fecha_modificacion')->nullable();
+            $table->date('fecha_espera')->nullable();
             $table->date('fecha_aprovado')->nullable();
             $table->date('fecha_envio')->nullable();
             $table->date('fecha_entrega_estimada')->nullable();

@@ -1,4 +1,4 @@
-        <div class="col-md-3 left_col">
+        <div class="col-md-3 left_col menu_fixed">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
               <a class="site_title">Inicio</a>
@@ -18,21 +18,28 @@
                     <ul class="nav child_menu">
                       <li><a href="{{ route('vehiculos.stock')}}"> Stock Vehiculos</a></li>
                       <li><a href="#">Stock Productos</a></li>
-                      <li><a href="{{ route('vehiculos.index')}}">Todos los Vehiculos</a></li>
+                      <li><a href="{{ route('vehiculos.index')}}">Unidades</a></li>
                     </ul>
                   </li>
+
+                  <li><a><i class="fa fa-table"></i> Envios <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="{{ route('envios.create')}}">Crear Envio</a></li>
+                      <li><a href="{{ route('envios.index')}}">Borradores</a></li>
+                      <li><a href="#">En espera</a></li>
+                      <li><a href="#">Aprobados</a></li>
+                      <li><a href="#">Enviados</a></li>
+                      <li><a href="#">Finalizados</a></li>
+                    </ul>
+                  </li>
+
                   <li><a><i class="fa fa-desktop"></i> Alertas <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                             <li><a href="#">Reposicion Regular</a></li>
                             <li><a href="#">Reposicion Extraordinaria</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-table"></i> Envios <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="{{ route('envios.create')}}">Realizar Envio</a></li>
-                      <li><a href="#">Lista de Envios</a></li>
-                    </ul>
-                  </li>
+                  
                   <li><a><i class="fa fa-globe"></i> Administracion <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="{{ route('stocks.index')}}">Asignacion de Stock a regionales</a></li>

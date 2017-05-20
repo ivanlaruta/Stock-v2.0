@@ -16,7 +16,7 @@ class CreateDetallesTable extends Migration
         Schema::create('detalles', function (Blueprint $table) {
 
             $table->integer('id_envio')->unsigned();
-            $table->string('chassis')->unsigned();
+            $table->char('chassis',40)->unsigned();
             $table->date('fecha_envio')->nullable();
             $table->date('fecha_entrega_estimada')->nullable();
             $table->date('fecha_entrega')->nullable();
