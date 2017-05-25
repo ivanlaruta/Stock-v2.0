@@ -11,7 +11,14 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel ">
                   <div class="x_title">
-                    <h2>ENVIO 00{{$env->id_envio}} <small>Datos generales</small></h2>
+                    <h2>
+                    @if($env->estado_envio == '1')<a href="{{ route('envios.index')}}">BORRADORES /  </a>@endif
+                    @if($env->estado_envio == '2') <a href="{{ route('envios.index_espera')}}">EN ESPERA DE APROBACION /  </a> @endif
+                    @if($env->estado_envio == '3')<a href="{{ route('envios.index_aprobados')}}">APROBADOS /  </a>@endif
+                    @if($env->estado_envio == '4')<a href="{{ route('envios.index_enviados')}}">ENVIADOS /  </a>@endif
+                    ENVIO {{$env->id_envio}} 
+                    <small>Datos generales</small>
+                    </h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
                       </li>
@@ -71,7 +78,7 @@
               {{-- fin general --}}
 
              {{-- detalle (agregar unidades)--}}
-
+            @if($env->estado_envio == '1' || $env->estado_envio == '2' )
             <div @if(is_null($request->marca)) class="row animated flash" @else  class="row" @endif>
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
@@ -262,13 +269,11 @@
                     
                         {!! Form::close()!!}
 
-                       
-                        
                       </div>
                     </div>
                   </div>
                 </div>
-              
+              @endif
               {{-- fin detalle --}}   
 
 
@@ -332,9 +337,39 @@
                             <button type="text" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-option-vertical"></span></button>
                             <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{ route('envios.detalle_all',['id' => $env-> id_envio, 'id2' =>$dets -> MARCA , 'id3' =>$dets -> MODELO, 'id4' =>$dets -> MASTER, 'id5' =>$dets -> ANIO_MOD, 'id6' =>$dets -> COLOR_EXTERNO, 'id7' =>$dets -> COLOR_INTERNO])}}">Ver detalle</a></li>
-                            <li><a href="#">Editar cantidad</a></li>
-                            <li><a href="#">Quitar</a></li>
+                            
+                            {!! Form::open(array('route' => ['envios.detalle_all',$env->id_envio], 'method' => 'get')) !!}﻿
+                            <input id="marca" name="marca" type="hidden" value="{{ $dets -> MARCA }}">
+                            <input id="modelo" name="modelo" type="hidden" value="{{ $dets -> MODELO }}">
+                            <input id="master" name="master" type="hidden" value="{{ $dets -> MASTER }}">
+                            <input id="anio" name="anio" type="hidden" value="{{ $dets -> ANIO_MOD }}">
+                            <input id="ext" name="ext" type="hidden" value="{{ $dets -> COLOR_EXTERNO }}">
+                            <input id="int" name="int" type="hidden" value="{{ $dets -> COLOR_INTERNO }}">
+                            <li><a href="#" onclick="$(this).closest('form').submit()">Ver detalles</a></li>
+                            {!! Form::close()!!}
+
+                            @if($env->estado_envio < '3')
+
+                            {!! Form::open(array('route' => ['envios.quitar_detalle',$env->id_envio], 'method' => 'get')) !!}﻿
+                            <input id="marca" name="marca" type="hidden" value="{{ $dets -> MARCA }}">
+                            <input id="modelo" name="modelo" type="hidden" value="{{ $dets -> MODELO }}">
+                            <input id="master" name="master" type="hidden" value="{{ $dets -> MASTER }}">
+                            <input id="anio" name="anio" type="hidden" value="{{ $dets -> ANIO_MOD }}">
+                            <input id="ext" name="ext" type="hidden" value="{{ $dets -> COLOR_EXTERNO }}">
+                            <input id="int" name="int" type="hidden" value="{{ $dets -> COLOR_INTERNO }}">
+                            <li><a href="#" onclick="$(this).closest('form').submit()"> Quitar de lista </a></li>
+                            {!! Form::close()!!}
+
+                            {!! Form::open(array('route' => ['envios.editar_detalle',$env->id_envio], 'method' => 'get')) !!}﻿
+                            <input id="marca" name="marca" type="hidden" value="{{ $dets -> MARCA }}">
+                            <input id="modelo" name="modelo" type="hidden" value="{{ $dets -> MODELO }}">
+                            <input id="master" name="master" type="hidden" value="{{ $dets -> MASTER }}">
+                            <input id="anio" name="anio" type="hidden" value="{{ $dets -> ANIO_MOD }}">
+                            <input id="ext" name="ext" type="hidden" value="{{ $dets -> COLOR_EXTERNO }}">
+                            <input id="int" name="int" type="hidden" value="{{ $dets -> COLOR_INTERNO }}">
+                            <li><a href="#" onclick="$(this).closest('form').submit()"> Editar Cantidad </a></li>
+                            {!! Form::close()!!}
+                            @endif
                           </ul>
                         </div>
 
@@ -347,7 +382,7 @@
                       </tbody>
                     </table>
                     <hr>
-                    <a href="{{ route('envios.detalle_all',['id' => $env-> id_envio, 'id2' =>'0', 'id3' =>'0', 'id4' =>'0', 'id5' =>'0', 'id6' =>'0', 'id7' =>'0'])}}">
+                    <a href="{{ route('envios.detalle_all',$env)}}">
                         <div class="panel-footer">
                             <span class="pull-left">Ver Todo el detalle</span>
                             <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -355,7 +390,6 @@
                         </div>
                     </a>
 
-                    
                       </div>
                     </div>
                   </div>
@@ -371,14 +405,75 @@
                 <div class="x_panel ">
                   <div class="x_content">
                       <div>
-                     
+
+                        @if($env->estado_envio == '1')
                         <div class="form-group">
                         <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-2">
-                          <button type="button" class="btn btn-primary">GUARDAR COMO BORRADOR</button>
-                          <button type="reset" class="btn btn-primary">GUARDAR PARA APROBACION</button>
+                          <a href="{{ route('envios.index')}}" class="btn btn-warning">GUARDAR COMO BORRADOR</a>
+                          <a href="{{ route('envios.espera',$env)}}" class="btn btn-primary">GUARDAR PARA APROBACION</a>
+                         
                           <button type="submit" class="btn btn-success">GUARDAR Y APROBAR </button>
                         </div>
-                      </div>
+                        </div>
+                        @endif
+
+                        @if($env->estado_envio == '2')
+                        <div class="form-group">
+                        <div class="col-md-4 col-md-offset-4">
+                          
+                        <a href="{{ route('envios.aprobar',$env)}}" class="btn btn-success btn-block">APROBAR</a>
+                        
+                        </div>
+                        </div>
+                        @endif
+
+                        @if($env->estado_envio == '3')
+                        <div class="form-group">
+                        <div class="col-md-6 col-md-offset-3">
+                          
+                        <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target=".bs-example-modal-lg">ENVIAR</button>
+
+                        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                            {!! Form::open(array('route' => ['envios.enviar',$env->id_envio], 'method' => 'get')) !!}﻿
+
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">Datos de Envio</h4>
+                              </div>
+                              <div class="modal-body">
+                              
+
+                              <h4>Fecha estimada de arribo:</h4>
+                                 
+                                 <fieldset>
+                                  <div class="control-group">
+                                  <div class="col-md-6 col-md-offset-3">
+                                    <div class="controls">
+                                      <div class="col-md-11 xdisplay_inputx form-group has-feedback">
+                                        <input type="text" name = "f_env" class="form-control has-feedback-left" id="f_env" aria-describedby="inputSuccess2Status2">
+                                        <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+                                        <span id="inputSuccess2Status2" class="sr-only">(success)</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  </div>
+                                </fieldset>                    
+                              </div>
+                              <div class="modal-footer">
+                                
+                                <button type="submit" class="btn btn-success "> ENVIAR </button>
+                              </div>
+                            {!! Form::close()!!}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        </div>
+                        </div>
+                        @endif
 
                       </div>
                       <hr>
@@ -402,15 +497,18 @@
 @endsection
 
 @section('scripts')
-<script>
+<script type="text/javascript">
 
+  var eta = $("#f_env");
+  eta.daterangepicker({
+    singleDatePicker:true,
+    minDate: moment(),
+    locale: {
+            format: 'YYYY-MM-DD'
+        }
+  });
 
+</script>
 
-
-   
-
-    
-
-</script> 
 @endsection
 

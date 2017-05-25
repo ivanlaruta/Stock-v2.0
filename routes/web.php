@@ -15,6 +15,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/test', function () {
+    return view('pruebas');
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -23,17 +28,76 @@ Route::get('/inicial', 'SesionController@index');
 
 Route::group(['prefix'=>'distribuidor','middleware'=>'auth'],function(){
 
+	route::get('envios/index_enviados',[
+		'uses' =>'EnviosController@index_enviados',
+		'as'   =>	'envios.index_enviados'
+	]);
+
+	route::get('envios/{id}/enviar',[
+		'uses' =>'EnviosController@enviar',
+		'as'   =>	'envios.enviar'
+	]);
+
+	route::get('envios/index_aprobados',[
+		'uses' =>'EnviosController@index_aprobados',
+		'as'   =>	'envios.index_aprobados'
+	]);
+
+	route::get('envios/{id}/aprobar',[
+		'uses' =>'EnviosController@aprobar',
+		'as'   =>	'envios.aprobar'
+	]);
+
+	route::get('envios/{id}/renovar_chassis',[
+		'uses' =>'EnviosController@renovar_chassis',
+		'as'   =>	'envios.renovar_chassis'
+	]);
+
+	route::get('envios/index_espera',[
+		'uses' =>'EnviosController@index_espera',
+		'as'   =>	'envios.index_espera'
+	]);
+
+	route::get('envios/{id}/aprobacion',[
+		'uses' =>'EnviosController@aprobacion',
+		'as'   =>	'envios.aprobacion'
+	]);
+
+	route::get('envios/{id}/espera',[
+		'uses' =>'EnviosController@espera',
+		'as'   =>	'envios.espera'
+	]);
+
 	route::get('envios/{id}/addDetalle',[
 		'uses' =>'EnviosController@addDetalle',
 		'as'   =>	'envios.addDetalle'
-	]);
+	]);	
 
 	route::get('envios/{id}/detalle',[
 		'uses' =>'EnviosController@detalle',
 		'as'   =>	'envios.detalle'
 	]);
 
-	route::get('envios/{id}/{id2}/{id3}/{id4}/{id5}/{id6}/{id7}/detalle_all',[
+	route::get('envios/{id}quitar_detalle',[
+		'uses' =>'EnviosController@quitar_detalle',
+		'as'   =>	'envios.quitar_detalle'
+	]);
+
+	route::get('envios/{id2}/{id}quitar_chassis',[
+		'uses' =>'EnviosController@quitar_chassis',
+		'as'   =>	'envios.quitar_chassis'
+	]);
+
+	route::get('envios/{id}editar_detalle',[
+		'uses' =>'EnviosController@editar_detalle',
+		'as'   =>	'envios.editar_detalle'
+	]);
+	route::get('envios/{id}update_detalle',[
+		'uses' =>'EnviosController@update_detalle',
+		'as'   =>	'envios.update_detalle'
+	]);
+	
+	route::get('envios/{id}/detalle_all',[
 		'uses' =>'EnviosController@detalle_all',
 		'as'   =>	'envios.detalle_all'
 	]);

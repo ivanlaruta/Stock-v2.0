@@ -26,9 +26,9 @@
                     <ul class="nav child_menu">
                       <li><a href="{{ route('envios.create')}}">Crear Envio</a></li>
                       <li><a href="{{ route('envios.index')}}">Borradores</a></li>
-                      <li><a href="#">En espera</a></li>
-                      <li><a href="#">Aprobados</a></li>
-                      <li><a href="#">Enviados</a></li>
+                      <li><a href="{{ route('envios.index_espera')}}">En espera de aprobacion</a></li>
+                      <li><a href="{{ route('envios.index_aprobados')}}">Aprobados</a></li>
+                      <li><a href="{{ route('envios.index_enviados')}}">Enviados</a></li>
                       <li><a href="#">Finalizados</a></li>
                     </ul>
                   </li>

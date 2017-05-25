@@ -19,7 +19,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2>{{ $marca }} / {{ $modelos }} /<small>Modelos</small></h2>
+                  <h2>STOCK - {{ $marca }} / {{ $modelos }} /<small>Modelos</small></h2>
                   
                   <div class="clearfix"></div>
                 </div>

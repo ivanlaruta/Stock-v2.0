@@ -26,6 +26,94 @@ class EnviosController extends Controller
         ;
     }
 
+    public function index_espera(Request $request)
+    {
+       $env =Envio::where('estado_envio', '=', '2')->get();
+        return view('distribuidor.envios.espera')
+            ->with('env',$env)
+        ;
+    }
+
+   
+
+    public function espera(Request $request,$id)
+    {
+       date_default_timezone_set('America/La_Paz');
+       $time = time();
+       $now =date("Y-m-d", $time);
+       $env =Envio::find($id);
+       $env->estado_envio = '2';
+       $env -> fecha_espera = $now;
+       $env->save();
+
+       return redirect()->route('envios.index_espera');
+    }
+
+    public function aprobacion(Request $request,$id)
+    {
+       date_default_timezone_set('America/La_Paz');
+       $time = time();
+       $now =date("Y-m-d", $time);
+       $env =Envio::find($id);
+       $env->estado_envio = '3';
+       $env -> fecha_aprobado = $now;
+       $env->save();
+
+       return redirect()->route('envios.index_aprobados');
+    }
+
+    public function index_aprobados(Request $request)
+    {
+       $env =Envio::where('estado_envio', '=', '3')->get();
+        return view('distribuidor.envios.aprobados')
+            ->with('env',$env)
+        ;
+    }
+    
+    public function aprobar(Request $request,$id)
+    {
+      
+        $env =Envio::find($id);
+
+        $det_all = Detalle::select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS', DB::raw("CASE WHEN (SELECT COUNT (dd.chassis) from detalles dd , envios env where env.id_envio = dd.id_envio and dd.chassis =detalles.chassis and env.estado_envio > 2) >0   THEN '1' ELSE '0' END AS estado"), DB::raw("CASE WHEN (SELECT COUNT (v.CHASIS) from v_stock_gtauto v where v.CHASIS = detalles.chassis) > 0   THEN '1' ELSE '0' END AS stock"))
+        ->join('v_stock_gtauto', 'chassis', '=','V_stock_gtauto.CHASIS')
+        ->where('id_envio','=',$id)
+        ->get();
+
+        return view('distribuidor.envios.hoja_aprobacion')
+            ->with('det_all',$det_all)
+            ->with('id',$id)
+            ->with('env',$env)
+            ;
+    }
+
+    public function index_enviados(Request $request)
+    {
+       $env =Envio::where('estado_envio', '=', '4')->get();
+        return view('distribuidor.envios.enviados')
+            ->with('env',$env)
+        ;
+    }
+    
+    public function enviar(Request $request,$id)
+    {
+        date_default_timezone_set('America/La_Paz');
+        $time = time();
+        $now =date("Y-m-d", $time);
+
+           $env =Envio::find($id);
+           $env->estado_envio = '4';
+           $env -> fecha_envio = $now;
+           $env -> fecha_entrega_estimada = $request->f_env;
+           $env->save();
+
+        return redirect()->route('envios.index_enviados');
+    }
+
+
+
+
+
     /**
      * Show the form for creating a new resource.
      *
@@ -60,9 +148,10 @@ class EnviosController extends Controller
         return redirect()->route('envios.detalle', ['id' => $env->id_envio]);
     }
 
-    public function detalle_all(Request $request,$id,$MODELO,$MARCA,$MASTER,$ANIO_MOD,$COLOR_EXTERNO,$COLOR_INTERNO)
+    public function detalle_all(Request $request,$id)
     {   
-        if($MODELO=='0')
+        $env =Envio::find($id);
+        if(is_null($request->modelo))
         {
             $det_all = V_stock_gtauto::select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS')
              ->join('detalles', 'detalles.chassis', '=','V_stock_gtauto.CHASIS')
@@ -73,20 +162,20 @@ class EnviosController extends Controller
         {
             $det_all = V_stock_gtauto::select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS')
             ->join('detalles', 'detalles.chassis', '=','V_stock_gtauto.CHASIS')
-            ->where('MARCA','=',$MODELO)
-            ->where('MODELO','=',$MARCA)
-            ->where('MASTER','=',$MASTER)
-            ->where('ANIO_MOD','=',$ANIO_MOD)
-            ->where('COLOR_EXTERNO','=',$COLOR_EXTERNO)
-            ->where('COLOR_INTERNO','=',$COLOR_INTERNO)
+            ->where('MARCA','=',$request->marca)
+            ->where('MODELO','=',$request->modelo)
+            ->where('MASTER','=',$request->master)
+            ->where('ANIO_MOD','=',$request->anio)
+            ->where('COLOR_EXTERNO','=',$request->ext)
+            ->where('COLOR_INTERNO','=',$request->int)
             ->get();
-
         }
 
         
         return view('distribuidor.envios.detalle_all')
             ->with('det_all',$det_all)
             ->with('id',$id)
+            ->with('env',$env)
             ;
     }
 
@@ -243,6 +332,11 @@ class EnviosController extends Controller
                                 ->where('ANIO_MOD','=',$request->anio)
                                 ->where('COLOR_EXTERNO','=',$request->ext)
                                 ->where('COLOR_INTERNO','=',$request->int)
+                                ->whereNotIn('CHASIS', function($query) {
+                                            $query->select('chassis')
+                                            ->from(with(new Detalle)->getTable())
+                                            ->join('envios','detalles.id_envio','envios.id_envio')
+                                            ->where('envios.estado_envio','>','2');})
                                 ->count();
 
                                 return view('distribuidor.envios.detalle')
@@ -276,6 +370,11 @@ class EnviosController extends Controller
             ->where('ANIO_MOD','=',$request->anio)
             ->where('COLOR_EXTERNO','=',$request->ext)
             ->where('COLOR_INTERNO','=',$request->int)
+            ->whereNotIn('CHASIS', function($query) {
+                                            $query->select('chassis')
+                                            ->from(with(new Detalle)->getTable())
+                                            ->join('envios','detalles.id_envio','envios.id_envio')
+                                            ->where('envios.estado_envio','>','2');})
             ->count();
         if ($request->cant <= $count)
         {
@@ -290,6 +389,11 @@ class EnviosController extends Controller
                 $query->select('chassis')
                 ->from(with(new Detalle)->getTable())
                 ->where('id_envio', $id);})
+            ->whereNotIn('CHASIS', function($query) {
+                                            $query->select('chassis')
+                                            ->from(with(new Detalle)->getTable())
+                                            ->join('envios','detalles.id_envio','envios.id_envio')
+                                            ->where('envios.estado_envio','>','2');})
             ->paginate($request->cant);
 
             
@@ -314,7 +418,7 @@ class EnviosController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -349,5 +453,202 @@ class EnviosController extends Controller
     public function destroy($id)
     {
         //
+    }
+    
+    public function quitar_chasis($id)
+    {
+        //
+    }
+
+    public function quitar_detalle(Request $request,$id)
+    {   
+        $det = Detalle::
+            join('V_stock_gtauto', 'chassis', '=','V_stock_gtauto.CHASIS')
+            ->where('V_stock_gtauto.MARCA','=',$request->marca)
+            ->where('V_stock_gtauto.MODELO','=',$request->modelo)
+            ->where('V_stock_gtauto.MASTER','=',$request->master)
+            ->where('V_stock_gtauto.ANIO_MOD','=',$request->anio)
+            ->where('V_stock_gtauto.COLOR_EXTERNO','=',$request->ext)
+            ->where('V_stock_gtauto.COLOR_INTERNO','=',$request->int)
+            ->where('id_envio','=',$id)
+            ->delete();
+
+         return redirect()->route('envios.detalle', ['id' => $id])->with('mensaje_info',"Seleccion eliminada correctamente"); 
+    }
+
+    public function editar_detalle(Request $request,$id)
+    {   
+        $env =Envio::find($id);
+
+        $det_all = Detalle::where('id_envio','=',$id)->get();
+        
+        $det = Detalle::
+            join('V_stock_gtauto', 'chassis', '=','V_stock_gtauto.CHASIS')
+            ->where('V_stock_gtauto.MARCA','=',$request->marca)
+            ->where('V_stock_gtauto.MODELO','=',$request->modelo)
+            ->where('V_stock_gtauto.MASTER','=',$request->master)
+            ->where('V_stock_gtauto.ANIO_MOD','=',$request->anio)
+            ->where('V_stock_gtauto.COLOR_EXTERNO','=',$request->ext)
+            ->where('V_stock_gtauto.COLOR_INTERNO','=',$request->int)
+            ->where('id_envio','=',$id)
+            ->get();
+
+        $count = DB::table('V_stock_gtauto')
+            ->where('MARCA','=',$request->marca)
+            ->where('MODELO','=',$request->modelo)
+            ->where('MASTER','=',$request->master)
+            ->where('ANIO_MOD','=',$request->anio)
+            ->where('COLOR_EXTERNO','=',$request->ext)
+            ->where('COLOR_INTERNO','=',$request->int)
+            ->whereNotIn('CHASIS', function($query) {
+                                            $query->select('chassis')
+                                            ->from(with(new Detalle)->getTable())
+                                            ->join('envios','detalles.id_envio','envios.id_envio')
+                                            ->where('envios.estado_envio','>','2');})
+            ->count();
+
+        $cant = DB::table('detalles')
+            ->join('V_stock_gtauto', 'chassis', '=','V_stock_gtauto.CHASIS')
+            ->where('V_stock_gtauto.MARCA','=',$request->marca)
+            ->where('V_stock_gtauto.MODELO','=',$request->modelo)
+            ->where('V_stock_gtauto.MASTER','=',$request->master)
+            ->where('V_stock_gtauto.ANIO_MOD','=',$request->anio)
+            ->where('V_stock_gtauto.COLOR_EXTERNO','=',$request->ext)
+            ->where('V_stock_gtauto.COLOR_INTERNO','=',$request->int)
+            ->where('id_envio','=',$id)
+            ->count();
+
+        return view('distribuidor.envios.detalle_edit')
+            ->with('request',$request)
+            ->with('det',$det)
+            ->with('count',$count)
+            ->with('cant',$cant)
+            ->with('env',$env)
+            ;
+    }
+
+    public function update_detalle(Request $request,$id)
+    {   
+        $det = Detalle::
+            join('V_stock_gtauto', 'chassis', '=','V_stock_gtauto.CHASIS')
+            ->where('V_stock_gtauto.MARCA','=',$request->marca)
+            ->where('V_stock_gtauto.MODELO','=',$request->modelo)
+            ->where('V_stock_gtauto.MASTER','=',$request->master)
+            ->where('V_stock_gtauto.ANIO_MOD','=',$request->anio)
+            ->where('V_stock_gtauto.COLOR_EXTERNO','=',$request->ext)
+            ->where('V_stock_gtauto.COLOR_INTERNO','=',$request->int)
+            ->where('id_envio','=',$id)
+            ->delete();
+
+
+        $count = DB::table('V_stock_gtauto')
+            ->where('MARCA','=',$request->marca)
+            ->where('MODELO','=',$request->modelo)
+            ->where('MASTER','=',$request->master)
+            ->where('ANIO_MOD','=',$request->anio)
+            ->where('COLOR_EXTERNO','=',$request->ext)
+            ->where('COLOR_INTERNO','=',$request->int)
+            ->whereNotIn('CHASIS', function($query) {
+                                            $query->select('chassis')
+                                            ->from(with(new Detalle)->getTable())
+                                            ->join('envios','detalles.id_envio','envios.id_envio')
+                                            ->where('envios.estado_envio','>','2');})
+            ->count();
+
+        if ($request->cant <= $count)
+        {
+            $unidades = V_stock_gtauto::
+              where('marca','=',$request->marca)
+            ->where('MODELO','=',$request->modelo)
+            ->where('MASTER','=',$request->master)
+            ->where('ANIO_MOD','=',$request->anio)
+            ->where('COLOR_EXTERNO','=',$request->ext)
+            ->where('COLOR_INTERNO','=',$request->int)
+            ->whereNotIn('CHASIS', function($query) use ($id){
+                $query->select('chassis')
+                ->from(with(new Detalle)->getTable())
+                ->where('id_envio', $id);})
+            ->whereNotIn('CHASIS', function($query) {
+                                            $query->select('chassis')
+                                            ->from(with(new Detalle)->getTable())
+                                            ->join('envios','detalles.id_envio','envios.id_envio')
+                                            ->where('envios.estado_envio','>','2');})
+            ->paginate($request->cant);
+
+            foreach($unidades as $add)
+            {
+                $det = new Detalle();
+                $det -> id_envio = $id;
+                $det -> chassis = $add->CHASIS;
+                $det -> save();
+            }
+
+            return redirect()->route('envios.detalle', ['id' => $id])->with('mensaje_info',"Se cambio la cantidad correctamentente");    
+        }  
+    }
+
+    public function quitar_chassis($id2,$id)
+    {   
+        $det = Detalle::
+           
+            where('id_envio','=',$id)
+            ->where('chassis','=',$id2)
+            ->delete();
+
+         return redirect()->route('envios.detalle_all', ['id' => $id])->with('mensaje_info',"Chassis eliminado de la lista"); 
+    }
+
+    public function renovar_chassis(Request $request,$id)
+    {   
+        $det = Detalle::
+            where('id_envio','=',$id)
+            ->where('chassis','=',$request->chassis)
+            ->delete();
+
+
+        $count = DB::table('V_stock_gtauto')
+            ->where('MARCA','=',$request->marca)
+            ->where('MODELO','=',$request->modelo)
+            ->where('MASTER','=',$request->master)
+            ->where('ANIO_MOD','=',$request->anio)
+            ->where('COLOR_EXTERNO','=',$request->ext)
+            ->where('COLOR_INTERNO','=',$request->int)
+            ->whereNotIn('CHASIS', function($query) {
+                                            $query->select('chassis')
+                                            ->from(with(new Detalle)->getTable())
+                                            ->join('envios','detalles.id_envio','envios.id_envio')
+                                            ->where('envios.estado_envio','>','2');})
+            ->count();
+
+        if ($count > 0)
+        {
+            $unidades = V_stock_gtauto::
+              where('marca','=',$request->marca)
+            ->where('MODELO','=',$request->modelo)
+            ->where('MASTER','=',$request->master)
+            ->where('ANIO_MOD','=',$request->anio)
+            ->where('COLOR_EXTERNO','=',$request->ext)
+            ->where('COLOR_INTERNO','=',$request->int)
+            ->whereNotIn('CHASIS', function($query) use ($id){
+                $query->select('chassis')
+                ->from(with(new Detalle)->getTable())
+                ->where('id_envio', $id);})
+            ->whereNotIn('CHASIS', function($query) {
+                                            $query->select('chassis')
+                                            ->from(with(new Detalle)->getTable())
+                                            ->join('envios','detalles.id_envio','envios.id_envio')
+                                            ->where('envios.estado_envio','>','2');})
+            ->paginate(1);
+
+            foreach($unidades as $add)
+            {
+                $det = new Detalle();
+                $det -> id_envio = $id;
+                $det -> chassis = $add->CHASIS;
+                $det -> save();
+            }
+
+        return redirect()->route('envios.aprobar', ['id' => $id])->with('mensaje_info',"Chassis renovado "); 
+        }
     }
 }

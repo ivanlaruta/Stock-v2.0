@@ -4,10 +4,15 @@
         
   <div class="right_col" role="main">
           <div class="">
-              <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="col-md-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>DETALLE PEDIDO {{$id}} <small>Detalle de unidades </small></h2>
+                    <h2>
+                    @if($env->estado_envio == '1')<a href="{{ route('envios.index')}}">BORRADORES /  </a>@endif
+                    @if($env->estado_envio == '2') <a href="{{ route('envios.index_espera')}}">EN ESPERA DE APROBACION /  </a> @endif
+                    @if($env->estado_envio == '3')<a href="{{ route('envios.index_aprobados')}}">APROBADOS /  </a>@endif
+                    @if($env->estado_envio == '4')<a href="{{ route('envios.index_enviados')}}">ENVIADOS /  </a>@endif
+                    <a href="{{ route('envios.detalle',$id)}}">PEDIDO {{$id}} /</a><small>Detalle de unidades </small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -18,7 +23,7 @@
                     <p class="text-muted font-13 m-b-30">
                      
                     </p>
-                      <table id="datatable1" class="table table-hover">
+                      <table id="datatabl" class="table table-sm">
                       <thead>
                         <tr>
                           <th>Marca</th>
@@ -44,13 +49,13 @@
                         <td>{{ $dets -> COLOR_INTERNO }}</td>
                         <td>{{ $dets -> CHASIS }}</td>
                         <td>
+                          @if($env->estado_envio < '3')
                           <div class="btn-group">
                             <button type="text" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-option-vertical"></span></button>
                             <ul class="dropdown-menu" role="menu">
-                            
-                            <li><a href="#">Cambiar chasis</a></li>
-                            <li><a href="#">Quitar</a></li>
+                            <li><a href="{{ route('envios.quitar_chassis',['id'=>$id ,'id2'=>$dets -> CHASIS ])}}">Quitar</a></li>
+                          @endif
                           </ul>
                         </div>
                         </td>                        

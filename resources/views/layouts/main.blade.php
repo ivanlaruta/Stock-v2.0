@@ -24,14 +24,13 @@
     
     <!-- iCheck -->
     <link href="{{asset('bower_components/gentelella/vendors/iCheck/skins/flat/green.css')}}" rel="stylesheet">
-    <!-- bootstrap-progressbar -->
-    <link href="{{asset('bower_components/gentelella/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css')}}" rel="stylesheet">
+    
     <!-- PNotify -->
     <link href="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.css')}}" rel="stylesheet">
     <link href="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.buttons.css')}}" rel="stylesheet">
     <link href="{{asset('bower_components/gentelella/vendors/pnotify/dist/pnotify.nonblock.css')}}" rel="stylesheet">
-
-
+    
+    
     <!-- Custom Theme Style -->
     <link href="{{asset('bower_components/gentelella/build/css/custom.min.css')}}" rel="stylesheet">
 
@@ -106,10 +105,11 @@
     <script src="{{asset('bower_components/gentelella/vendors/flot.curvedlines/curvedLines.js')}}"></script>
     <!-- DateJS -->
     <script src="{{asset('bower_components/gentelella/vendors/DateJS/build/date.js')}}"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="{{asset('bower_components/gentelella/vendors/moment/min/moment.min.js')}}"></script>
-    <script src="{{asset('bower_components/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
     
+    <!-- bootstrap-daterangepicker -->
+    {{-- <script src="{{asset('bower_components/gentelella/vendors/moment/min/moment.min.js')}}"></script>
+    <script src="{{asset('bower_components/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
+     --}}
     <!-- iCheck -->
     <script src="{{asset('bower_components/gentelella/vendors/iCheck/icheck.min.js')}}"></script>
 
@@ -137,6 +137,10 @@
     <script src="{{asset('bower_components/gentelella/vendors/pdfmake/build/vfs_fonts.js')}}"></script>
     
 
+    <!-- bootstrap-daterangepicker -->
+    <script src="{{asset('bower_components/gentelella/vendors/moment/min/moment.min.js')}}"></script>
+    <script src="{{asset('bower_components/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
+
      <!-- jQuery Smart Wizard -->
     <script src="{{asset('bower_components/gentelella/vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js')}}"></script>
     
@@ -145,15 +149,47 @@
     <!-- Custom Theme Scripts -->
 {{--     <script src="{{asset('bower_components/gentelella/build/js/custom.min.js')}}"></script> --}}   
     <script src="{{asset('js/custom.js')}}"></script>
+    
 
+    @yield('scripts')
+
+
+
+    {{-- alertas --}}
     @if(!session('mensaje')==null)
+
         <script type="text/javascript"> 
+        var mensaje='{{session('mensaje')}}';
+        
             function init_PNotify() {
-            new PNotify({title: "Correcto",type: "success",text: "La seleccion se agrego correctamente.",styling: 'bootstrap3',});
+            new PNotify({title: "Correcto",type: "success",text: mensaje ,styling: 'bootstrap3',});
             }; 
         </script>>    
     @endif﻿
-    @yield('scripts')
+
+    @if(!session('mensaje_info')==null)
+
+        <script type="text/javascript"> 
+        var mensaje_info='{{session('mensaje_info')}}';
+        
+            function init_PNotify() {
+            new PNotify({title: "Correcto",type: "info",text: mensaje_info ,styling: 'bootstrap3',});
+            }; 
+        </script>>    
+    @endif﻿
+    
+    @if(!session('mensaje_error')==null)
+
+        <script type="text/javascript"> 
+        var mensaje_error='{{session('mensaje_error')}}';
+        
+            function init_PNotify() {
+            new PNotify({title: "Error",type: "error",text: mensaje_error ,styling: 'bootstrap3',});
+            }; 
+        </script>>    
+    @endif﻿
+
+   
 
   </body>
 

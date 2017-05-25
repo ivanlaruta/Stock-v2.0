@@ -7,7 +7,7 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>BORRADORES <small>Envios</small></h2>
+                    <h2>EN ESPERA DE APROBACION <small>Envios</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -29,7 +29,7 @@
                           <th>Tipo</th>
                           <th>Observacion</th>
                           <th>Creacion</th>
-                          <th>Modificado</th>
+                          <th>Guardado</th>
                           <th></th>
                           
                         </tr>
@@ -44,7 +44,7 @@
                           <td>{{ $envs -> tipo}}</td>
                           <td>{{ $envs -> observaciones }}</td>
                           <td>{{ date('d-m-Y',strtotime($envs -> fecha_creacion)) }}</td>
-                          <td>{{ isset($envs -> fecha_modificacion) ? date('d-m-Y',strtotime($envs -> fecha_modificacion)) : 'no modificado'  }}</td>
+                          <td>{{ date('d-m-Y',strtotime($envs -> fecha_espera)) }}</td>>
                           
                           <td>
                             <div class="btn-group">
