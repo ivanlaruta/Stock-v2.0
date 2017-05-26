@@ -26,6 +26,7 @@
                       <table id="datatabl" class="table table-sm">
                       <thead>
                         <tr>
+                          <th>#</th>
                           <th>Marca</th>
                           <th>Modelo</th>
                           <th>Master</th>
@@ -41,6 +42,7 @@
                       <tbody>
                         @foreach($det_all as $dets)
                         <tr>
+                        <td>{{ $dets -> ITEM }}</td>
                         <td>{{ $dets -> MARCA }}</td>
                         <td>{{ $dets -> MODELO }}</td>
                         <td>{{ $dets -> MASTER }}</td>

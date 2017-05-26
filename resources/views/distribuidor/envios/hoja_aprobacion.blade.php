@@ -79,6 +79,9 @@
                           <th>Exterior</th>
                           <th>Interior</th>
                           <th>Chassis</th>
+                          <th>estado</th>
+                          <th>disp</th>
+                          <th>stock</th>
                          
                           <th></th> 
                           
@@ -89,7 +92,7 @@
 
                         @foreach($det_all as $dets)
 
-                        <tr @if($dets -> estado == '0') class="success"  @else class="danger" @endif>
+                        <tr @if($dets -> estado_disp == 's') class="success"  @else class="danger" @endif>
                         <td>{{ $dets -> MARCA }}</td>
                         <td>{{ $dets -> MODELO }}</td>
                         <td>{{ $dets -> MASTER }}</td>
@@ -97,6 +100,9 @@
                         <td>{{ $dets -> COLOR_EXTERNO }}</td>
                         <td>{{ $dets -> COLOR_INTERNO }}</td>
                         <td>{{ $dets -> CHASIS }}</td>
+                        <td>{{ $dets -> estado }}</td>
+                        <td>{{ $dets -> estado_disp }}</td>
+                        <td>{{ $dets -> stock }}</td>
                         
                         <td>
                           <div class="btn-group">
@@ -105,7 +111,7 @@
                             <ul class="dropdown-menu" role="menu">
                             
                             <li><a href="{{ route('envios.quitar_chassis',['id'=>$id ,'id2'=>$dets -> CHASIS ])}}">Quitar</a></li>
-                            @if($dets -> estado == '1')
+                            @if($dets -> estado_disp == 'n')
                             <?php $a=1; ?>
                             {!! Form::open(array('route' => ['envios.renovar_chassis',$env->id_envio], 'method' => 'get')) !!}﻿
                             <input id="marca" name="marca" type="hidden" value="{{ $dets -> MARCA }}">

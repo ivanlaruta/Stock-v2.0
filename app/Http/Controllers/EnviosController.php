@@ -75,10 +75,22 @@ class EnviosController extends Controller
       
         $env =Envio::find($id);
 
-        $det_all = Detalle::select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS', DB::raw("CASE WHEN (SELECT COUNT (dd.chassis) from detalles dd , envios env where env.id_envio = dd.id_envio and dd.chassis =detalles.chassis and env.estado_envio > 2) >0   THEN '1' ELSE '0' END AS estado"), DB::raw("CASE WHEN (SELECT COUNT (v.CHASIS) from v_stock_gtauto v where v.CHASIS = detalles.chassis) > 0   THEN '1' ELSE '0' END AS stock"))
+        $det_all = Detalle::select('detalles.estado','V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS', DB::raw("CASE WHEN (SELECT COUNT (dd.chassis) from detalles dd , envios env where env.id_envio = dd.id_envio and dd.chassis =detalles.chassis and env.estado_envio > 2) >0   THEN 'n' ELSE 's' END AS estado_disp"), DB::raw("CASE WHEN (SELECT COUNT (v.CHASIS) from v_stock_gtauto v where v.CHASIS = detalles.chassis) > 0   THEN 's' ELSE 'n' END AS stock"))
         ->join('v_stock_gtauto', 'chassis', '=','V_stock_gtauto.CHASIS')
         ->where('id_envio','=',$id)
         ->get();
+
+        
+        foreach($det_all as $det)
+            {
+                if($det->estado_disp == 's'){
+                    $det->estado ='1';
+                }
+                else
+                {
+                     $det->estado ='0';
+                }
+            }   
 
         return view('distribuidor.envios.hoja_aprobacion')
             ->with('det_all',$det_all)
@@ -153,14 +165,14 @@ class EnviosController extends Controller
         $env =Envio::find($id);
         if(is_null($request->modelo))
         {
-            $det_all = V_stock_gtauto::select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS')
+            $det_all = V_stock_gtauto::select(DB::raw('ROW_NUMBER() OVER(ORDER BY MARCA DESC) AS ITEM'),'V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS')
              ->join('detalles', 'detalles.chassis', '=','V_stock_gtauto.CHASIS')
              ->where('id_envio','=',$id)
              ->get();
         }
         else
         {
-            $det_all = V_stock_gtauto::select('V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS')
+            $det_all = V_stock_gtauto::select(DB::raw('ROW_NUMBER() OVER(ORDER BY MARCA DESC) AS ITEM'),'V_stock_gtauto.MARCA','V_stock_gtauto.MODELO','V_stock_gtauto.MASTER','V_stock_gtauto.ANIO_MOD','V_stock_gtauto.COLOR_EXTERNO','V_stock_gtauto.COLOR_INTERNO','V_stock_gtauto.CHASIS')
             ->join('detalles', 'detalles.chassis', '=','V_stock_gtauto.CHASIS')
             ->where('MARCA','=',$request->marca)
             ->where('MODELO','=',$request->modelo)
@@ -168,6 +180,7 @@ class EnviosController extends Controller
             ->where('ANIO_MOD','=',$request->anio)
             ->where('COLOR_EXTERNO','=',$request->ext)
             ->where('COLOR_INTERNO','=',$request->int)
+            ->where('id_envio','=',$id)
             ->get();
         }
 
@@ -639,6 +652,7 @@ class EnviosController extends Controller
                                             ->join('envios','detalles.id_envio','envios.id_envio')
                                             ->where('envios.estado_envio','>','2');})
             ->paginate(1);
+
 
             foreach($unidades as $add)
             {

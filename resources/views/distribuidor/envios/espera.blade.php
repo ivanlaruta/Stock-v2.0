@@ -15,12 +15,10 @@
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <p class="text-muted font-13 m-b-30">
-                     
+                    <p class="text-muted font-13 m-b-30">                  
                     </p>
 
-
-                     <table class="table table-hover">
+                     <table class="table table-hover table-responsive">
                       <thead>
                         <tr>
                           <th>Envio</th>
@@ -44,7 +42,7 @@
                           <td>{{ $envs -> tipo}}</td>
                           <td>{{ $envs -> observaciones }}</td>
                           <td>{{ date('d-m-Y',strtotime($envs -> fecha_creacion)) }}</td>
-                          <td>{{ date('d-m-Y',strtotime($envs -> fecha_espera)) }}</td>>
+                          <td>{{ date('d-m-Y',strtotime($envs -> fecha_espera)) }}</td>
                           
                           <td>
                             <div class="btn-group">

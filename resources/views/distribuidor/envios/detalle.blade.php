@@ -410,9 +410,10 @@
                         <div class="form-group">
                         <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-2">
                           <a href="{{ route('envios.index')}}" class="btn btn-warning">GUARDAR COMO BORRADOR</a>
-                          <a href="{{ route('envios.espera',$env)}}" class="btn btn-primary">GUARDAR PARA APROBACION</a>
+
+                          <a href="{{ route('envios.espera',$env)}}" @if($det->isEmpty()) class="btn btn-primary disabled" @else class="btn btn-primary" @endif>GUARDAR PARA APROBACION</a>
                          
-                          <button type="submit" class="btn btn-success">GUARDAR Y APROBAR </button>
+                          
                         </div>
                         </div>
                         @endif

@@ -16,7 +16,7 @@ class VehiculosController extends Controller
      */
     public function index()
     {
-        $v = V_stock_gtauto::where('estado_real', '=', 'stock')->get();
+        $v = V_stock_gtauto::where('estado', '=', 'DISPONIBLE')->get();
         return view('distribuidor.stock.vehiculos')
             ->with('v',$v)
         ;
@@ -29,15 +29,15 @@ class VehiculosController extends Controller
         { 
 
         $request->ciudad='TODOS';
-        $mod_T = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado_real = 'stock' AND m.cod_marca = 'T'  GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
-        $mod_L = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado_real = 'stock' AND m.cod_marca = 'L' GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
-        $mod_Y = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE MODELOS NOT IN ('BOMBA DE AGUA','GENERADOR DIESEL','MOTOR A GASOLINA') AND m.estado_real = 'stock' AND m.cod_marca = 'Y' GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
+        $mod_T = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado = 'DISPONIBLE' AND m.cod_marca = 'T'  GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
+        $mod_L = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado = 'DISPONIBLE' AND m.cod_marca = 'L' GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
+        $mod_Y = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE MODELOS NOT IN ('BOMBA DE AGUA','GENERADOR DIESEL','MOTOR A GASOLINA') AND m.estado = 'DISPONIBLE' AND m.cod_marca = 'Y' GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
         }
         else
         {
-        $mod_T = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado_real = 'stock' AND m.cod_marca = 'T' AND m.nom_localidad='".$request->ciudad."' GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
-        $mod_L = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado_real = 'stock' AND m.cod_marca = 'L' AND m.nom_localidad='".$request->ciudad."' GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
-        $mod_Y = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE  MODELOS NOT IN ('BOMBA DE AGUA','GENERADOR DIESEL','MOTOR A GASOLINA') AND m.estado_real = 'stock' AND m.cod_marca = 'Y' AND m.nom_localidad='".$request->ciudad." 'GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
+        $mod_T = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado = 'DISPONIBLE' AND m.cod_marca = 'T' AND m.nom_localidad='".$request->ciudad."' GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
+        $mod_L = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado = 'DISPONIBLE' AND m.cod_marca = 'L' AND m.nom_localidad='".$request->ciudad."' GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
+        $mod_Y = DB::select( DB::raw("select m.MODELOS,m.MARCA, COUNT(m.MODELOS) as STOCK_REAL FROM v_stock_gtauto m WHERE  MODELOS NOT IN ('BOMBA DE AGUA','GENERADOR DIESEL','MOTOR A GASOLINA') AND m.estado = 'DISPONIBLE' AND m.cod_marca = 'Y' AND m.nom_localidad='".$request->ciudad." 'GROUP BY m.MODELOS ,M.MARCA ORDER BY m.MODELOS ASC"));
         }
 
         return view('distribuidor.stock.stock')
@@ -54,11 +54,11 @@ class VehiculosController extends Controller
 
         if($ciudad=='TODOS')
         { 
-        $mod = DB::select( DB::raw("select m.COD_MODELO,m.MODELO,m.MARCA, COUNT(m.MODELO) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado_real = 'stock' AND m.MODELOS = '".$modelos."' GROUP BY m.COD_MODELO,m.MODELO ,M.MARCA ORDER BY m.MODELO ASC")); 
+        $mod = DB::select( DB::raw("select m.COD_MODELO,m.MODELO,m.MARCA, COUNT(m.MODELO) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado = 'DISPONIBLE' AND m.MODELOS = '".$modelos."' GROUP BY m.COD_MODELO,m.MODELO ,M.MARCA ORDER BY m.MODELO ASC")); 
         }
         else
         {
-        $mod = DB::select( DB::raw("select m.COD_MODELO,m.MODELO,m.MARCA, COUNT(m.MODELO) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado_real = 'stock' AND m.MODELOS = '".$modelos."' AND m.nom_localidad='".$ciudad."' GROUP BY m.COD_MODELO,m.MODELO ,M.MARCA ORDER BY m.MODELO ASC")); 
+        $mod = DB::select( DB::raw("select m.COD_MODELO,m.MODELO,m.MARCA, COUNT(m.MODELO) as STOCK_REAL FROM v_stock_gtauto m WHERE m.estado = 'DISPONIBLE' AND m.MODELOS = '".$modelos."' AND m.nom_localidad='".$ciudad."' GROUP BY m.COD_MODELO,m.MODELO ,M.MARCA ORDER BY m.MODELO ASC")); 
         }
        return view('distribuidor.stock.modelos')
         ->with('marca',$marca)
@@ -72,12 +72,12 @@ class VehiculosController extends Controller
     {   
         if($ciudad=='TODOS')
         { 
-        $mas = DB::select( DB::raw("select m.COD_MASTER,m.MASTER,m.MODELOS,m.MARCA, COUNT(m.MASTER)as STOCK_REAL  FROM v_stock_gtauto m  WHERE m.estado_real = 'stock'  AND m.COD_MODELO = '".$modelo."'  GROUP BY m.COD_MASTER,m.MODELOS,M.MARCA,M.MASTER ORDER BY m.MASTER ASC ")); 
+        $mas = DB::select( DB::raw("select m.COD_MASTER,m.MASTER,m.MODELOS,m.MARCA, COUNT(m.MASTER)as STOCK_REAL  FROM v_stock_gtauto m  WHERE m.estado = 'DISPONIBLE'  AND m.COD_MODELO = '".$modelo."'  GROUP BY m.COD_MASTER,m.MODELOS,M.MARCA,M.MASTER ORDER BY m.MASTER ASC ")); 
                 
         }
         else
         {
-            $mas = DB::select( DB::raw("select s.stock_min, s.stock_asignado,m.COD_MASTER,m.MASTER,m.MODELOS,m.MARCA, COUNT(m.MASTER)as STOCK_REAL  FROM v_stock_gtauto m ,asignacion_stocks s WHERE m.estado_real = 'stock'  AND m.COD_MODELO = '".$modelo."' AND m.nom_localidad='".$ciudad."' AND  s.regional=m.nom_localidad AND m.COD_MASTER = s.cod_master GROUP BY m.COD_MASTER,m.MODELOS,M.MARCA,M.MASTER ,s.stock_min, s.stock_asignado ORDER BY m.MASTER ASC "));  
+            $mas = DB::select( DB::raw("select s.stock_min, s.stock_asignado,m.COD_MASTER,m.MASTER,m.MODELOS,m.MARCA, COUNT(m.MASTER)as STOCK_REAL  FROM v_stock_gtauto m ,asignacion_stocks s WHERE m.estado = 'DISPONIBLE'  AND m.COD_MODELO = '".$modelo."' AND m.nom_localidad='".$ciudad."' AND  s.regional=m.nom_localidad AND m.COD_MASTER = s.cod_master GROUP BY m.COD_MASTER,m.MODELOS,M.MARCA,M.MASTER ,s.stock_min, s.stock_asignado ORDER BY m.MASTER ASC "));  
         }
         $modelo1 = V_stock_gtauto::select('MODELO')->where('COD_MODELO', '=', $modelo)->first();
 
@@ -93,13 +93,13 @@ class VehiculosController extends Controller
     {   
         if($ciudad=='TODOS')
         {
-        $v = V_stock_gtauto::where('estado_real', '=', 'stock')
+        $v = V_stock_gtauto::where('estado', '=', 'DISPONIBLE')
        ->where('COD_MASTER', '=', $master)
        ->get();
         }
         else
         {
-        $v = V_stock_gtauto::where('estado_real', '=', 'stock')
+        $v = V_stock_gtauto::where('estado', '=', 'DISPONIBLE')
        ->where('COD_MASTER', '=', $master)
        ->where('nom_localidad', '=', $ciudad)
        ->get();
