@@ -35,4 +35,8 @@ class V_stock_gtauto extends Model
     {
         return $this->hasMany('App\Detalle','CHASIS');
     }
+    public function detalles_Chassis()
+    {
+        return $this->hasMany('App\Detalle_Chassis','CHASIS');
+    }
 }

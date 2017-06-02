@@ -28,14 +28,24 @@ Route::get('/inicial', 'SesionController@index');
 
 Route::group(['prefix'=>'distribuidor','middleware'=>'auth'],function(){
 
-	route::get('envios/index_enviados',[
-		'uses' =>'EnviosController@index_enviados',
-		'as'   =>	'envios.index_enviados'
+	route::get('envios/enviar_parcial',[
+		'uses' =>'EnviosController@enviar_parcial',
+		'as'   =>	'envios.enviar_parcial'
 	]);
-
+	
 	route::get('envios/{id}/enviar',[
 		'uses' =>'EnviosController@enviar',
 		'as'   =>	'envios.enviar'
+	]);
+
+	route::get('envios/{id}/envio_parcial',[
+		'uses' =>'EnviosController@envio_parcial',
+		'as'   =>	'envios.envio_parcial'
+	]);
+
+	route::get('envios/modal_parcial',[
+		'uses' =>'EnviosController@modal_parcial',
+		'as'   =>	'envios.modal_parcial'
 	]);
 
 	route::get('envios/index_aprobados',[
@@ -78,7 +88,7 @@ Route::group(['prefix'=>'distribuidor','middleware'=>'auth'],function(){
 		'as'   =>	'envios.detalle'
 	]);
 
-	route::get('envios/{id}quitar_detalle',[
+	route::get('envios/{id}/{id2}/quitar_detalle',[
 		'uses' =>'EnviosController@quitar_detalle',
 		'as'   =>	'envios.quitar_detalle'
 	]);
@@ -97,7 +107,7 @@ Route::group(['prefix'=>'distribuidor','middleware'=>'auth'],function(){
 		'as'   =>	'envios.update_detalle'
 	]);
 	
-	route::get('envios/{id}/detalle_all',[
+	route::get('envios/{id}/{id2}/detalle_all',[
 		'uses' =>'EnviosController@detalle_all',
 		'as'   =>	'envios.detalle_all'
 	]);

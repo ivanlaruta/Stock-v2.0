@@ -7,7 +7,7 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>EN ESPERA DE APROBACION <small>Envios</small></h2>
+                    <h2>ESPERANDO APROBACION <small>Envios</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -15,51 +15,42 @@
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <p class="text-muted font-13 m-b-30">                  
+                    <p class="text-muted font-13 m-b-30">
+                     
                     </p>
 
-                     <table class="table table-hover table-responsive">
+                  <div class="table-responsive">
+                    <table class="table table-striped jambo_table bulk_action">
+                     
                       <thead>
                         <tr>
                           <th>Envio</th>
                           <th>Origen</th>
                           <th>Destino</th>
                           <th>Tipo</th>
-                          <th>Observacion</th>
                           <th>Creacion</th>
-                          <th>Guardado</th>
-                          <th></th>
+                          <th>Reserva</th>
+                          <th>Observacion</th>
                           
                         </tr>
                       </thead>
                         
                       <tbody>
                         @foreach($env as $envs)
-                        <tr>                
+                        <tr class='clickable-row' data-href="{{ route('envios.detalle',$envs-> id_envio )}}" >                
                           <td>{{ $envs-> id_envio }}</td>
                           <td>{{ $envs -> origen }}</td>
                           <td>{{ $envs -> destino }}</td>
                           <td>{{ $envs -> tipo}}</td>
-                          <td>{{ $envs -> observaciones }}</td>
                           <td>{{ date('d-m-Y',strtotime($envs -> fecha_creacion)) }}</td>
                           <td>{{ date('d-m-Y',strtotime($envs -> fecha_espera)) }}</td>
+                          <td>{{ $envs -> observaciones }}</td>
                           
-                          <td>
-                            <div class="btn-group">
-                              <button type="text" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
-                              <span class="glyphicon glyphicon-option-vertical"></span></button>
-                              <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ route('envios.detalle',$envs-> id_envio )}}">Ver detalle</a></li>
-                                <li><a href="#">Modificar</a></li>
-                                <li><a href="#">Eliminar</a></li>
-                              </ul>
-                            </div>
-                          </td>
                         </tr>
                         @endforeach
                       </tbody>
                     </table>
-                  </div>
+                  </div></div>
                 </div>
               </div>
              </div>
@@ -69,6 +60,12 @@
 
 @section('scripts')
 <script>
+
+$(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
 
     $(document).ready(function() {
          //alert('1');

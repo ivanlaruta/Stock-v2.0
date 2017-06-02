@@ -4,8 +4,7 @@
 <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
-            
-            
+               
             <div class="row">
 
               <div class="col-md-12 col-sm-12 col-xs-12">
@@ -13,7 +12,7 @@
                   <div class="x_title">
                     <h2>
                     
-                   <a href="{{ route('envios.detalle',$id)}}">ENVIO {{$id}} / </a>HOJA DE APROBACION /
+                   <a href="{{ route('envios.detalle',$id)}}">ENVIO {{$id}} / </a>HOJA DE ENVIO PARCIAL /
                     <small>Datos generales</small>
                     </h2>
                     <ul class="nav navbar-right panel_toolbox">
@@ -72,7 +71,6 @@
                 </div>
               </div>
 
-             
               {{-- LISTA --}}   
         
               <div class="row">
@@ -80,7 +78,7 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel ">
                   <div class="x_title">
-                    <h2>APROBACION DE UNIDADES <small>Unidades reservadas por aprobar</small></h2>
+                    <h2>ENVIO DE UNIDADES <small>Asignacion de envios parciales.</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -105,38 +103,52 @@
                           <th>Año</th> 
                           <th>Exterior</th>
                           <th>Interior</th>
-                          <th>Chassis</th>
+                          <th>Cantidad aprovada</th>
+                          <th>Cantidad enviada</th>
+                          <th>Restante</th>
                           <th></th>
+                          
                         </tr>
                       </thead>
                         
                       <tbody>
                       <?php $a = 0; ?>
-                        @foreach($det_all as $dets)
-                        <tr @if($dets -> validado == '1') class="selected" @endif>
-                        <td>{{ $dets -> ITEM }}</td>
-                        <td>{{ $dets -> vehiculo -> MARCA }}</td>
-                        <td>{{ $dets -> vehiculo -> MODELO }}</td>
-                        <td>{{ $dets -> vehiculo -> MASTER }}</td>
-                        <td>{{ $dets -> vehiculo -> ANIO_MOD }}</td>
-                        <td>{{ $dets -> vehiculo -> COLOR_EXTERNO }}</td>
-                        <td>{{ $dets -> vehiculo -> COLOR_INTERNO }}</td>
-                        <td>{{ $dets -> chassis }}</td>
-                        <td> @if($dets -> validado == '1')
-                        <button type="button" class="btn btn-success btn-round btn-xs">
-                          <span class="fa fa-check" data-toggle="tooltip" data-placement="bottom" title="Correcto"></span>
-                        </button>
-                        @else
-                        <?php $a=1; ?>
-                        <button type="button" class="btn btn-danger btn-round btn-xs">
-                          <span class="fa fa-close" data-toggle="tooltip" data-placement="bottom" title="Este chassis ya NO se encuentra disponible"></span>
-                        </button>
-                        @endif </td>
+                        @foreach($det as $dets)
+                        @if($dets->sin_env > 0)
                         
+                        <tr>
+                        <td>{{ $dets -> id_detalle}}</td>
+                        <td>{{ $dets -> marca -> MARCA}}</td>
+                        <td>{{ $dets -> modelo -> MODELO}}</td>
+                        <td>{{ $dets -> master -> MASTER}}</td>
+                        <td>{{ $dets -> anio }}</td>
+                        <td>{{ $dets -> col_ext }}</td>
+                        <td>{{ $dets -> col_int }}</td>
+                        <td>{{ $dets -> cantidad_aprobada}}</td>
+                        <td>{{ $dets -> cantidad_enviada}}</td>
+                        <td>{{ $dets -> sin_env}}</td>
+                       
+                        <td><a href="#" class=" btn btn-warning btn-round btn-xs btnEnviar" id_detalle = '{{ $dets -> id_detalle}}' id = '{{$id}}' data-toggle="tooltip" data-placement="bottom" title="Asignar cantidad"><i class="fa fa-sign-out"></i></a></td>
+
+                        @endif                       
                         @endforeach
                        
                       </tbody>
                     </table>
+
+
+                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                          
+
+                              
+                            
+                            </div>
+                          </div>
+                        </div>
+
+
                     
                   </div>
                       
@@ -159,8 +171,8 @@
                         <div class="form-group">
                         <div class="col-md-12">
                           <div class="btn-group btn-group-justified">
-                            <a href="" class= "btn btn-danger btn-round"  >CANCELAR</a>
-                            <a href="{{ route('envios.aprobacion',$env)}}" @if($a == 1 ) class= "btn btn-warning btn-round" @else class= "btn btn-success btn-round" @endif >APROBAR</a>
+                            <a href="#" class= "btn btn-primary btn-round "  >TERMINAR </a>
+                           
                             
                           </div>
                         </div>
@@ -186,14 +198,63 @@
 @section('scripts')
 <script type="text/javascript">
 
-  var eta = $("#f_env");
-  eta.daterangepicker({
-    singleDatePicker:true,
-    minDate: moment(),
-    locale: {
-            format: 'YYYY-MM-DD'
-        }
+var btnEnviar = $(".btnEnviar");
+btnEnviar.on("click",function(){
+  // alert($(this).attr('id'));
+  frm_parcial($(this));
+});
+
+var modalContent = $(".modal-content");
+var modal=$(".bs-example-modal-lg");
+
+var frm_parcial = function(objeto){ 
+  $.ajax({
+    type: "GET",
+    cache: false,
+    dataType: "html",
+    url: "{{ route('envios.modal_parcial')}}",
+    data: {
+      id: objeto.attr("id"),
+      id_detalle: objeto.attr("id_detalle")
+    },
+    // beforeSend: function(xhr)
+    // {
+    //   NProgress.start();
+    // },
+    success: function(dataResult)
+    {
+      console.log(dataResult);
+      modalContent.empty().html(dataResult);                        
+      modal.modal('show');
+
+      NProgress.done();
+    },
+    error: function(jqXHR, exception)
+    {
+      var msg = '';
+      if (jqXHR.status === 0) {
+          msg = 'Not connect.\n Verify Network.';
+      } else if (jqXHR.status == 404) {
+          msg = 'Requested page not found. [404]';
+      } else if (jqXHR.status == 500) {
+          msg = 'Internal Server Error [500].';
+      } else if (exception === 'parsererror') {
+          msg = 'Requested JSON parse failed.';
+      } else if (exception === 'timeout') {
+          msg = 'Time out error.';
+      } else if (exception === 'abort') {
+          msg = 'Ajax request aborted.';
+      } else {
+          msg = 'Uncaught Error.\n' + jqXHR.responseText;
+      }
+
+      alert(msg);
+      NProgress.done();
+    }
   });
+}
+
+
 
 </script>
 

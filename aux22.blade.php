@@ -4,31 +4,7 @@
 <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
-
-            <div class="page-title">
-              <div class="title_left">
-                <h2>
-                @if($env->estado_envio == '1')<a href="{{ route('envios.index')}}">BORRADORES /  </a>@endif
-                    @if($env->estado_envio == '2') <a href="{{ route('envios.index')}}">EN ESPERA DE APROBACION /  </a> @endif
-                    @if($env->estado_envio == '3')<a href="{{ route('envios.index')}}">APROBADOS /  </a>@endif
-                    @if($env->estado_envio == '4')<a href="{{ route('envios.index')}}">APROBADOS - ENVIADOS PARCIALMENTE /  </a>@endif
-                    @if($env->estado_envio == '5')<a href="{{ route('envios.index')}}">APROBADOS - ENVIADOS COMPLETOS /  </a>@endif
-                    ENVIO {{$env->id_envio}} 
-
-                </h2>
-              </div>
-
-              <div class="title_right">
-                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="...">
-                    <span class="input-group-btn">
-                              <button class="btn btn-default" type="button">Buscar</button>
-                          </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
             
             <div class="row">
 
@@ -36,7 +12,11 @@
                 <div class="x_panel ">
                   <div class="x_title">
                     <h2>
-                    
+                    @if($env->estado_envio == '1')<a href="{{ route('envios.index')}}">BORRADORES /  </a>@endif
+                    @if($env->estado_envio == '2') <a href="{{ route('envios.index_espera')}}">EN ESPERA DE APROBACION /  </a> @endif
+                    @if($env->estado_envio == '3')<a href="{{ route('envios.index_aprobados')}}">APROBADOS /  </a>@endif
+                    @if($env->estado_envio == '4')<a href="{{ route('envios.index_enviados')}}">ENVIADOS /  </a>@endif
+                    ENVIO {{$env->id_envio}} 
                     <small>Datos generales</small>
                     </h2>
                     <ul class="nav navbar-right panel_toolbox">
@@ -98,12 +78,12 @@
               {{-- fin general --}}
 
              {{-- detalle (agregar unidades)--}}
-            @if($env->estado_envio < '2')
-            <div @if(is_null($request->marca)) class="row animated shake" @else  class="row" @endif>
+            @if($env->estado_envio == '1' || $env->estado_envio == '2' )
+            <div @if(is_null($request->marca)) class="row animated flash" @else  class="row" @endif>
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2><small>Agregar Unidades</small></h2>
+                    <h2>AGREGAR <small>Agregar Unidades</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i @if(is_null($request->marca)) class="fa fa-chevron-down" @else class="fa fa-chevron-up" @endif ></i></a>
                       </li>
@@ -111,6 +91,8 @@
                     <div class="clearfix"></div>
                   </div>
 
+                         
+              
                   <div  class="x_content" @if(is_null($request->marca))  style="display: none;"  @endif>
 
                     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -131,6 +113,7 @@
                          
                             <label class="control-label " for="first-name">MODELO</label>
                         
+
                             @if(is_null($request->marca))
                              {!! Form::text('modelo',null,['class'=>'form-control','placeholder'=>'seleccione una marca','readonly'])!!}
                             @else
@@ -147,17 +130,19 @@
                           <input id="marca" name="marca" type="hidden" value="{{ $request->marca }}">
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
                          
+
                               <label class="control-label " for="first-name">MASTER</label>
                              
                               @if(is_null($request->marca) || is_null($request->modelo))
                                {!! Form::text('master',null,['class'=>'form-control','placeholder'=>'seleccione una marca y un modelo','readonly'])!!}
-
+                            
                             @else
                               
                               {!! Form::select('master',$masters,$request->master,['class'=>'form-control','placeholder'=>'seleccione un master' ,'onchange'=>'this.form.submit();'])!!}
                               
                             @endif
                            
+
                         {!! Form::close()!!}
                         </div>
                       </div>
@@ -168,6 +153,7 @@
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
                           <input id="master" name="master" type="hidden" value="{{ $request->master }}">
 
+                       
                               <label class="control-label " for="first-name">AÑO</label>
                              
                                 @if(is_null($request->marca) || is_null($request->modelo) || is_null($request->master))
@@ -187,6 +173,8 @@
                           <input id="modelo" name="modelo" type="hidden" value="{{ $request->modelo }}">
                           <input id="master" name="master" type="hidden" value="{{ $request->master }}">
                           <input id="anio" name="anio" type="hidden" value="{{ $request->anio }}">
+
+                         
 
                               <label class="control-label " for="first-name">COLOR EXTERIOR</label>
                               
@@ -242,25 +230,25 @@
                           </div>
                           <div class="col-md-4"> 
     
+
                                 <label class="control-label " for="first-name">CANTIDAD A ASIGNAR</label>
                                
                                 {!! Form::number('cant',null,['class'=> 'form-control','placeholder'=>'Ingrese cantidad','readonly'])!!}<hr>
                           </div>
-                          <br>
-                          {{-- <div class="col-md-4">
-                              
-                                  <button type="button" class = "btn btn-success btn-block disabled">AGREGAR A LA LISTA</button>
-                              
-                          </div> --}}
-
-                          </div>
+                           </div>
                           
+                            <div class="form-group">
+                              <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                  <button type="button" class = "btn btn-success btn-block disabled">AGREGAR A LA LISTA</button>
+                         </div>  </div>
+                        
+
                             @else
                             <div class="col-md-4"> 
                           
                                 <label class="control-label " for="first-name">CANTIDAD DISPONIBLE</label>
                               
-                                {!! Form::text('disp',$count.' unidades',['class'=>'form-control animated flash','readonly'])!!}
+                                {!! Form::text('disp',$count,['class'=>'form-control','readonly'])!!}
                              </div>
                             <div class="col-md-4"> 
 
@@ -268,12 +256,14 @@
                               
                                 {!! Form::number('cant',null,['class'=> 'form-control','placeholder'=>'Ingrese cantidad','min'=>'1' ,'max'=>$count,'required'])!!}<hr>
                             </div>
-                            <br>
-                            <div class="col-md-4">
-                                {!! Form::submit('AGREGAR A LA LISTA',['class'=>'btn btn-success btn-block animated flipInY'])!!}
-                            </div>
-
                            </div>
+
+                          
+                            <div class="form-group">
+                              <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                {!! Form::submit('AGREGAR A LA LISTA',['class'=>'btn btn-success btn-block animated pulse'])!!}
+                              </div>
+                            </div>
                             
                             @endif
                     
@@ -286,14 +276,19 @@
               @endif
               {{-- fin detalle --}}   
 
+
+
               {{-- LISTA --}}   
-        
+
+
+               
               <div class="row">
-                
+             
+
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel ">
                   <div class="x_title">
-                    <h2><small>Selecciones agrgadas</small></h2>
+                    <h2>SELECCIONES AGREGADAS <small>Lista resumen</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -307,10 +302,11 @@
                        
                        <p class="text-muted font-13 m-b-30"></p>
 
-                     <div class="table-responsive">
-                      <table class="table table-striped jambo_table bulk_action">
+
+                     <table id="datatabl" class="table table-bordered table-responsive">
                       <thead>
                         <tr>
+
                           <th>#</th>
                           <th>Marca</th>
                           <th>Modelo</th>
@@ -318,72 +314,92 @@
                           <th>Año</th> 
                           <th>Exterior</th>
                           <th>Interior</th>
-                          <th>Cant Solicitada</th>
-                          @if($env->estado_envio > '2') 
-                          <th>Cant Aprobada </th> 
-                          <th>Cant Enviada</th>
-                          <th>Cant entregada</th>
-                          @endif
-                          <th>Opciones</th> 
+                          <th>Cantidad</th>
+                          <th></th> 
+                          
                         </tr>
                       </thead>
                         
                       <tbody>
                         @foreach($det as $dets)
                         <tr>
-                        <td>{{ $dets -> id_detalle}}</td>
-                        <td>{{ $dets -> marca -> MARCA}}</td>
-                        <td>{{ $dets -> modelo -> MODELO}}</td>
-                        <td>{{ $dets -> master -> MASTER}}</td>
-                        <td>{{ $dets -> anio }}</td>
-                        <td>{{ $dets -> col_ext }}</td>
-                        <td>{{ $dets -> col_int }}</td>
-                        <td>{{ $dets -> cantidad}}</td>
-                        @if($env->estado_envio > '2')
-                        <td>{{ $dets -> cantidad_aprobada}}</td>
-                        <td>{{ $dets -> cantidad_enviada}}</td>
-                        <td>{{ $dets -> cantidad_entregada}}</td>
-                        @endif
-                        <td align="center">
+                        <td>{{ $dets -> ITEM}}</td>
+                        <td>{{ $dets -> MARCA }}</td>
+                        <td>{{ $dets -> MODELO }}</td>
+                        <td>{{ $dets -> MASTER }}</td>
+                        <td>{{ $dets -> ANIO_MOD }}</td>
+                        <td>{{ $dets -> COLOR_EXTERNO }}</td>
+                        <td>{{ $dets -> COLOR_INTERNO }}</td>
+                        <td>{{ $dets -> CANTIDAD }}</td>
+
+                        <td>
                         <div class="btn-group">
-                          @if($env->estado_envio >= '2')
-                          <a href="{{ route('envios.detalle_all',['id'=>$env->id_envio,'id2'=>$dets -> id_detalle ] )}}" class="btn btn-success btn-round btn-xs" data-toggle="tooltip" data-placement="bottom" title="Ver unidades reservadas" ><i class="fa fa-car"></i></a> 
-                          @endif
-                          @if($env->estado_envio < '2')
-                          <button type="button" class="btn btn-warning btn-round btn-xs" data-toggle="tooltip" data-placement="bottom" title="Editar Cantidad"><i class="fa fa-edit"></i></button>
+                            <button type="text" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-option-vertical"></span></button>
+                            <ul class="dropdown-menu" role="menu">
                             
-                          <a href="{{ route('envios.quitar_detalle',['id'=>$env->id_envio,'id2'=>$dets -> id_detalle ] )}}" class="btn btn-danger btn-round btn-xs" data-toggle="tooltip" data-placement="bottom" title="Quitar Seleccion" ><i class="fa fa-trash-o"></i></a> 
-                          @endif
-                          
+                            {!! Form::open(array('route' => ['envios.detalle_all',$env->id_envio], 'method' => 'get')) !!}﻿
+                            <input id="marca" name="marca" type="hidden" value="{{ $dets -> MARCA }}">
+                            <input id="modelo" name="modelo" type="hidden" value="{{ $dets -> MODELO }}">
+                            <input id="master" name="master" type="hidden" value="{{ $dets -> MASTER }}">
+                            <input id="anio" name="anio" type="hidden" value="{{ $dets -> ANIO_MOD }}">
+                            <input id="ext" name="ext" type="hidden" value="{{ $dets -> COLOR_EXTERNO }}">
+                            <input id="int" name="int" type="hidden" value="{{ $dets -> COLOR_INTERNO }}">
+                            <li><a href="#" onclick="$(this).closest('form').submit()">Ver detalles</a></li>
+                            {!! Form::close()!!}
+
+                            @if($env->estado_envio < '3')
+
+                            {!! Form::open(array('route' => ['envios.quitar_detalle',$env->id_envio], 'method' => 'get')) !!}﻿
+                            <input id="marca" name="marca" type="hidden" value="{{ $dets -> MARCA }}">
+                            <input id="modelo" name="modelo" type="hidden" value="{{ $dets -> MODELO }}">
+                            <input id="master" name="master" type="hidden" value="{{ $dets -> MASTER }}">
+                            <input id="anio" name="anio" type="hidden" value="{{ $dets -> ANIO_MOD }}">
+                            <input id="ext" name="ext" type="hidden" value="{{ $dets -> COLOR_EXTERNO }}">
+                            <input id="int" name="int" type="hidden" value="{{ $dets -> COLOR_INTERNO }}">
+                            <li><a href="#" onclick="$(this).closest('form').submit()"> Quitar de lista </a></li>
+                            {!! Form::close()!!}
+
+                            {!! Form::open(array('route' => ['envios.editar_detalle',$env->id_envio], 'method' => 'get')) !!}﻿
+                            <input id="marca" name="marca" type="hidden" value="{{ $dets -> MARCA }}">
+                            <input id="modelo" name="modelo" type="hidden" value="{{ $dets -> MODELO }}">
+                            <input id="master" name="master" type="hidden" value="{{ $dets -> MASTER }}">
+                            <input id="anio" name="anio" type="hidden" value="{{ $dets -> ANIO_MOD }}">
+                            <input id="ext" name="ext" type="hidden" value="{{ $dets -> COLOR_EXTERNO }}">
+                            <input id="int" name="int" type="hidden" value="{{ $dets -> COLOR_INTERNO }}">
+                            <li><a href="#" onclick="$(this).closest('form').submit()"> Editar Cantidad </a></li>
+                            {!! Form::close()!!}
+                            @endif
+                          </ul>
                         </div>
+
+                         {{--  <a href="#" class="btn btn-warning" title="Modificar"><span class="fa fa-edit "></span></a>
+                          <a href="#" onclick ="return confirm('¿Desea quitar de la lista?')" class="btn btn-danger" title="Eliminar"><span class="fa fa-trash-o"></span></a>   --}}
                        
                         </td>
                         @endforeach
                        
                       </tbody>
                     </table>
-                       @if($env->estado_envio >= '2')
-                      </div>
-                      <hr>
-                      <div class="col-md-12">
-                      <a href="{{ route('envios.detalle_all',['id'=>$env->id_envio,'id2'=>'0' ])}}">
+                    <hr>
+                    <a href="{{ route('envios.detalle_all',$env)}}">
                         <div class="panel-footer">
-                            <span class="pull-left">Ver todas las unidades reservadas por este envio</span>
-                            <span class="pull-right"><i class="fa fa-car"></i></span>
+                            <span class="pull-left">Ver Todo el detalle</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                             <div class="clearfix"></div>
                         </div>
-                      </a>
+                    </a>
+
                       </div>
-                      </div>
-                      @endif
                     </div>
                   </div>
                 </div>
-              
               </div>
 
               {{-- fin LISTA --}}
               
+
+
               <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel ">
@@ -392,51 +408,31 @@
 
                         @if($env->estado_envio == '1')
                         <div class="form-group">
-                        <div class="col-md-12">
-                          <div class="btn-group btn-group-justified">
-                            <a href="{{ route('envios.index')}}" class=" btn btn-warning btn-round">GUARDAR COMO BORRADOR</a>
+                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-2">
+                          <a href="{{ route('envios.index')}}" class="btn btn-warning">GUARDAR COMO BORRADOR</a>
 
-                            <a href="{{ route('envios.espera',$env)}}" onclick ="return confirm('Se reserveran unidades con las caracterisiticas solicitadas de forma automaticam. ¿Desea continuar?')"   @if($det->isEmpty()) class="btn btn-primary btn-round disabled" @else  class="btn btn-primary btn-round" @endif>GUARDAR Y ESPERAR APROBACION</a>
-
-                            <a href="" @if($det->isEmpty()) class="btn btn-success btn-round disabled" @else  class=" btn btn-success btn-round" @endif>GUARDAR Y APROBAR</a>
-                            
-                          </div>
+                          <a href="{{ route('envios.espera',$env)}}" @if($det->isEmpty()) class="btn btn-primary disabled" @else class="btn btn-primary" @endif>GUARDAR PARA APROBACION</a>
+                         
+                          
                         </div>
                         </div>
                         @endif
 
                         @if($env->estado_envio == '2')
                         <div class="form-group">
-                        <div class="col-md-12">
-                          <div class="btn-group btn-group-justified">
-                            <a href="" class=" btn btn-warning btn-round">DESRESERVAR Y VOLVER A BORRADOR</a>
-
-                            <a href="{{ route('envios.aprobar',$env)}}" class="btn btn-primary btn-round">APROBAR</a>
-
-                            <a href="" class="btn btn-success btn-round">APROBAR Y ENVIAR</a>
-                            
-                          </div>  
-                                               
-                        </div>
-                        </div>
-                        @endif
-
-                        @if($env->estado_envio == '3' || $env->estado_envio == '4')
-                        <div class="form-group">
-                        <div class="col-md-12">
-                          <div class="btn-group btn-group-justified">
-                            <a href="{{ route('envios.index')}}" class=" btn btn-warning btn-round">VOLVER</a>
-                            <a href="{{ route('envios.envio_parcial',$env)}}" class="btn btn-primary btn-round">REALIZAR ENVIO PARCIAL </a>
-                            <a href="" class="btn btn-success btn-round" data-toggle="modal" data-target=".bs-example-modal-lg" >ENVIAR TODO</a>
-                            
-                          </div>  
-                                               
-                        </div>
-                        </div>
-
-
-                        @endif
+                        <div class="col-md-4 col-md-offset-4">
+                          
+                        <a href="{{ route('envios.aprobar',$env)}}" class="btn btn-success btn-block">APROBAR</a>
                         
+                        </div>
+                        </div>
+                        @endif
+
+                        @if($env->estado_envio == '3')
+                        <div class="form-group">
+                        <div class="col-md-6 col-md-offset-3">
+                          
+                        <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target=".bs-example-modal-lg">ENVIAR</button>
 
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                           <div class="modal-dialog modal-lg">
@@ -450,13 +446,12 @@
                               </div>
                               <div class="modal-body">
                               
-                              <p>Todas las unidades de este envio se registraran con la fecha estimada de arribo que seleccionara, Ademas el envio se registraga como envio completo, es decir que todas las unidades se enviaran conjuntamente.</p>
-                              
+
+                              <h4>Fecha estimada de arribo:</h4>
                                  
                                  <fieldset>
                                   <div class="control-group">
-                                  <label class="control-label col-md-2 col-md-offset-3" >Fecha estimada de arribo :</label>
-                                  <div class="col-md-4 ">
+                                  <div class="col-md-6 col-md-offset-3">
                                     <div class="controls">
                                       <div class="col-md-11 xdisplay_inputx form-group has-feedback">
                                         <input type="text" name = "f_env" class="form-control has-feedback-left" id="f_env" aria-describedby="inputSuccess2Status2">
@@ -466,8 +461,7 @@
                                     </div>
                                   </div>
                                   </div>
-                                </fieldset>
-
+                                </fieldset>                    
                               </div>
                               <div class="modal-footer">
                                 
@@ -477,7 +471,11 @@
                             </div>
                           </div>
                         </div>
-  
+                        
+                        </div>
+                        </div>
+                        @endif
+
                       </div>
                       <hr>
                       <br>
@@ -485,6 +483,9 @@
                   </div>
                 </div>
               </div>
+
+
+              
 
                 </div>
               </div>

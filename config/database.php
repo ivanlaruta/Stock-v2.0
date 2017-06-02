@@ -72,7 +72,7 @@ return [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST', '192.168.11.155'),
             'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'stock'),
+            'database' => env('DB_DATABASE', 'stock_reg'),
             'username' => env('DB_USERNAME', 'IvanLaruta'),
             'password' => env('DB_PASSWORD', 'mataronakeny2'),
             'charset' => 'utf8',
